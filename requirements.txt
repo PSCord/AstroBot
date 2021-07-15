@@ -1,7 +1,7 @@
 asyncpg==0.23.0
 black==21.5b2
 discord.py @ git+https://github.com/Rapptz/discord.py@f14e584304d9d6676c90f8aa59d6e4be23d22a10
-isort==5.8.0
+isort==5.9.2
 jishaku==2.1.0
 psutil==5.8.0
 uvloop==0.15.3
