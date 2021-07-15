@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  bot:
+    build: .
+    command: python -m src
+    volumes:
+      - ./:/opt/astrobot
+    environment:
+      - PSQL_DSN
+      - BOT_TOKEN
+      - JISHAKU_HIDE=true
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./schema:/docker-entrypoint-initdb.d
+      - ./data/postgres:/var/lib/postgresql/data

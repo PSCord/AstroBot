@@ -1,0 +1,5 @@
+# AstroBot
+.env
+data/postgres
+# Python
+__pycache__
