@@ -14,6 +14,7 @@ log = logging.getLogger(__name__)
 EXTENSIONS = {
     'jishaku',
     'src.plugins.test',
+    'src.plugins.autochannels',
 }
 
 
