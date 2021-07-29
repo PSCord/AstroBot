@@ -15,13 +15,6 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__name__)
 
-
-IGNORED_ERRORS = (
-    commands.CheckFailure,
-    commands.CommandNotFound,
-    commands.DisabledCommand,
-)
-
 DEFAULT_INTERNAL_ERROR = 'Something unexpected went wrong during command execution. Please try again later.'
 
 
