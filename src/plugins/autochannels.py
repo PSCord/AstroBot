@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import logging
-import os
 import time
 from typing import TYPE_CHECKING
 
-import discord
 from discord.ext import commands
+
+from .. import Embed
 
 
 if TYPE_CHECKING:
@@ -21,8 +21,7 @@ class Autochannels(commands.Cog):
         self.bot = bot
 
     game_reviews_embed = (
-        discord.Embed(
-            color=0x557ED,
+        Embed(
             title='**Review Format**',
             description='Use the following template to post.\n```Game Name\n**Rating:** x/10\n**Playtime:** x hours\n**Review:** A few words about your thoughts on the game and why you gave it that rating```',
         )
@@ -34,8 +33,7 @@ class Autochannels(commands.Cog):
         )
     )
     psn_friends_embed = (
-        discord.Embed(
-            color=0x557ED,
+        Embed(
             title='**LFG Post Format**',
             description='Use the following template to post.\n```\nYourPSNUsername\n\n**Games:** Game 1, Game 2, ...\n**Bio:**  A few words about yourself,\n          and who you\'re looking for\n**Timezone:** UTC+X/PST/etc```',
         )
