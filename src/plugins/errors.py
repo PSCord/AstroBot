@@ -31,7 +31,7 @@ class Errors(commands.Cog):
         log.exception(f'Unhandled exception in {event} handler.')
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
         embed = None
         can_send = ctx.channel.permissions_for(ctx.me).send_messages
 
@@ -41,7 +41,9 @@ class Errors(commands.Cog):
         elif isinstance(error, commands.CommandInvokeError):
             if not isinstance(error.original, discord.DiscordServerError):
                 embed = Embed(title='Internal AstroBot Error', description=DEFAULT_INTERNAL_ERROR)
-                log.exception(f'Unhandled exception in {ctx.command.qualified_name}.', exc_info=error)
+
+                command_name = ctx.command.qualified_name  # type: ignore
+                log.exception(f'Unhandled exception in {command_name} command.', exc_info=error)
             else:
                 embed = Embed(
                     title='Discord Server Error',
