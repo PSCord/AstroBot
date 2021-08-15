@@ -15,6 +15,7 @@ EXTENSIONS = {
     'jishaku',
     'src.plugins.autochannels',
     'src.plugins.errors',
+    'src.plugins.welcome',
 }
 
 
