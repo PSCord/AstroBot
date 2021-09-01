@@ -1,4 +1,4 @@
-asyncpg==0.23.0
+asyncpg==0.24.0
 black==21.7b0
 discord.py @ git+https://github.com/Rapptz/discord.py@ecf239d2a2e6ee8e027ca5fef9acf4564a9f3a09
 isort==5.9.3
