@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import logging
 import time
+import feedparser
 from typing import TYPE_CHECKING
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 from .. import Embed
 
@@ -19,7 +20,9 @@ log = logging.getLogger(__name__)
 class Autochannels(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
+        self.blog.start()
 
+    link = ""
     game_reviews_embed = (
         Embed(
             title='**Review Format**',
@@ -72,6 +75,18 @@ class Autochannels(commands.Cog):
                         await msg.delete()
                 await message.channel.send(embed=self.psn_friends_embed)
                 self.psn_friends_cooldown[message.author.id] = time.time()
+
+    @tasks.loop(seconds=60.0)
+    async def blog(self):
+        blog_channel = self.bot.get_channel(876496435493888100)
+        feed = feedparser.parse('http://feeds.feedburner.com/psblog')
+        if self.link != feed.entries[0].feedburner_origlink:
+            await blog_channel.send(content=feed.entries[0].feedburner_origlink)
+            self.link = feed.entries[0].feedburner_origlink
+    
+    @blog.before_loop
+    async def before_blog(self):
+        await self.bot.wait_until_ready()
 
 
 def setup(bot: AstroBot):
