@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import time
 import feedparser
-import os
 from typing import TYPE_CHECKING
 
 from discord.ext import commands, tasks
