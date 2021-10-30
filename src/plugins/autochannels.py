@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import logging
 import time
-import feedparser
 from typing import TYPE_CHECKING
 
+import feedparser
 from discord.ext import commands, tasks
 
 from .. import Embed
@@ -48,7 +48,7 @@ class Autochannels(commands.Cog):
         )
     )
 
-    game_reviews = 867753068003328000 
+    game_reviews = 867753068003328000
     psn_friends = 867800438715449384
     psn_friends_cooldown = {}
 
@@ -86,7 +86,7 @@ class Autochannels(commands.Cog):
         if self.link != feed.entries[0].feedburner_origlink:
             await blog_channel.send(content=feed.entries[0].feedburner_origlink)
             self.link = feed.entries[0].feedburner_origlink
-    
+
     @blog.before_loop
     async def before_blog(self):
         await self.bot.wait_until_ready()
