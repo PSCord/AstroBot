@@ -24,15 +24,16 @@ class Welcome(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        general = self.bot.get_channel(876496435493888100)
-        if (time.time() - self.cooldown) < 90:
-            return
-        else:
-            await general.send(
-                content=f'Welcome to the **unofficial** PS Discord, {member.mention}! Check <#719536356727980032> to get started.',
-                delete_after=90,
-            )
-            self.cooldown = time.time()
+        if member.guild == 860585050838663188:
+            general = self.bot.get_channel(876496435493888100)
+            if (time.time() - self.cooldown) < 90:
+                return
+            else:
+                await general.send(
+                    content=f'Welcome to the **unofficial** PS Discord, {member.mention}! Check <#719536356727980032> to get started.',
+                    delete_after=90,
+                )
+                self.cooldown = time.time()
 
 
 def setup(bot: AstroBot):
