@@ -16,6 +16,7 @@ EXTENSIONS = {
     'src.plugins.autochannels',
     'src.plugins.errors',
     'src.plugins.welcome',
+    'src.plugins.levels',
 }
 
 
