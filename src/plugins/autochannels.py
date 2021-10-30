@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import time
 import feedparser
+import os
 from typing import TYPE_CHECKING
 
 from discord.ext import commands, tasks
@@ -47,6 +48,9 @@ class Autochannels(commands.Cog):
             inline=False,
         )
     )
+
+    game_reviews = 867753068003328000 
+    psn_friends = 867800438715449384
     psn_friends_cooldown = {}
 
     def cooldown(self, id):
@@ -56,7 +60,7 @@ class Autochannels(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.channel.id == 867753068003328000 and message.author.id != self.bot.application_id:
+        if message.channel.id == self.game_reviews and message.author.id != self.bot.application_id:
             if not (all(x in message.content.lower() for x in ['rating', 'playtime', 'review'])):
                 await message.delete()
             else:
@@ -64,7 +68,7 @@ class Autochannels(commands.Cog):
                     if msg.author.id == self.bot.application_id:
                         await msg.delete()
                 await message.channel.send(embed=self.game_reviews_embed)
-        elif message.channel.id == 867800438715449384 and message.author.id != self.bot.application_id:
+        elif message.channel.id == self.psn_friends and message.author.id != self.bot.application_id:
             if (not (all(x in message.content.lower() for x in ['games', 'bio', 'timezone']))) or self.cooldown(
                 message.author.id
             ):
