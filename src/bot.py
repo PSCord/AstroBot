@@ -17,6 +17,7 @@ EXTENSIONS = {
     'src.plugins.errors',
     'src.plugins.welcome',
     'src.plugins.levels',
+    'src.plugins.info'
 }
 
 
