@@ -1,19 +1,22 @@
 from __future__ import annotations
 
+import datetime
 import logging
 from typing import TYPE_CHECKING
 
 import discord
-from discord.ext import commands
-from .. import Embed
-import datetime
 from dateutil.relativedelta import relativedelta
+from discord.ext import commands
+
+from .. import Embed
+
 
 if TYPE_CHECKING:
     from .. import AstroBot
 
 
 log = logging.getLogger(__name__)
+
 
 class Info(commands.Cog):
     def __init__(self, bot: AstroBot):
@@ -52,15 +55,11 @@ class Info(commands.Cog):
         else:
             desc += f'\nCreated **{delta.years}** years and **{delta.months}** months ago.'
 
-
-        infoembed = (
-            Embed(
-                title=f'{ctx.author.name} (Member {pos})',
-                description=desc
-            )
-            .set_thumbnail(url=str(ctx.author.avatar.url))
+        infoembed = Embed(title=f'{ctx.author.name} (Member {pos})', description=desc).set_thumbnail(
+            url=str(ctx.author.avatar.url)
         )
         await ctx.send(embed=infoembed)
+
 
 def setup(bot: AstroBot):
     bot.add_cog(Info(bot))
