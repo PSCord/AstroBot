@@ -29,7 +29,7 @@ class Boosters(commands.Cog):
 
     thank_boost = (
         Embed(
-            title='Thanks for boostnig the PlayStation Discord!',
+            title='Thanks for boosting the PlayStation Discord!',
             description='You\'ve unlocked the following perks for boosting:\n<:check:684852990980522060> **A special booster role, displayed separately on the member list**\n<:check:684852990980522060> **Ability to choose your color from a unique set of roles** (`*color` command)\n<:check:684852990980522060> **Image/file attachment and link embed access in all channels**\n<:check:684852990980522060> **Access to <#684069943196909583> - an exclusive chat channel**\n\nSee <#719536356727980032> to learn more about our leveling and boosting perks system. Note that those perks are not permanent, and you will lose access if you transfer or cancel your boost - unless you earn them via our leveling system otherwise.\n\n*This is an automated message. Replies will not be monitored - use modmail to contact the mods.*',
         )
         .set_thumbnail(url='https://cdn.discordapp.com/emojis/750404031381372968.png')
