@@ -18,6 +18,7 @@ EXTENSIONS = {
     'src.plugins.welcome',
     'src.plugins.levels',
     'src.plugins.info',
+    'src.plugins.boosters',
 }
 
 
