@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import discord
 import logging
 import os
 import time
@@ -402,13 +403,14 @@ This is the final level. Congratulations on completing our level road! We're wor
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        async with self.bot.db.acquire() as conn:
-            await conn.execute(
-                '''
-                INSERT INTO levels (id, xp, lvl) VALUES ($1, 0, 0)
-                ''',
-                member.id,
-            )
+        if member.guild == 860585050838663188:
+            async with self.bot.db.acquire() as conn:
+                await conn.execute(
+                    '''
+                    INSERT INTO levels (id, xp, lvl) VALUES ($1, 0, 0)
+                    ''',
+                    member.id,
+                )
 
     @commands.command()
     async def xp(self, ctx: commands.Context):
@@ -455,6 +457,47 @@ This is the final level. Congratulations on completing our level road! We're wor
                     int(set[0]),
                 )
             await ctx.send(f'Set <@{set[0]}>\'s XP to {set[1]}.')
+
+    @commands.command()
+    async def leaderboard(self, ctx: commands.Context, *, args = None):
+        string = ""
+        num = 1
+        if args is None or args == 1:
+            async with self.bot.db.acquire() as conn:
+                record = await conn.fetch(
+                    '''
+                    SELECT id, xp
+                    FROM levels
+                    ORDER BY xp DESC
+                    LIMIT 10
+                    '''
+                )
+        elif int(args) > 1 and int(args) <= 10:
+            async with self.bot.db.acquire() as conn:
+                record = await conn.fetch(
+                    '''
+                    SELECT id, xp
+                    FROM levels
+                    ORDER BY xp DESC
+                    LIMIT 10
+                    OFFSET $1
+                    ''',
+                    int(args) * 10
+                )
+                num = num + (int(args) - 1) * 10
+        for x in record:
+            try:
+                user = self.bot.get_guild(860585050838663188).get_member(x['id'])
+                user = user.name
+            except (discord.errors.NotFound, AttributeError) as e:
+                user = "User left."
+            string += f"{num}. {user} - **{x['xp']}** <:p_:828359003775303702>\n"
+            #string += f"{num}. {x['id']} - **{x['xp']}** <:p_:828359003775303702>\n"
+            num += 1
+        embed = Embed(
+            title = '**Points leaderboard**', description=string
+        )
+        await ctx.send(embed=embed)
 
 
 def setup(bot: AstroBot):
