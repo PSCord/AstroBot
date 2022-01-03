@@ -4,6 +4,7 @@ import discord
 import logging
 import os
 import time
+import math
 from typing import TYPE_CHECKING
 
 import asyncpg
@@ -341,6 +342,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         904116212043235339,
         904116235237752832,
     ]
+    names = ['None', 'Bronze 1', 'Bronze 2', 'Bronze 3', 'Silver 1', 'Silver 2,', 'Silver 3', 'Gold 1', 'Gold 2', 'Gold 3', 'Platinum']
     main_server = 860585050838663188
     xp_cooldown = {}
 
@@ -414,6 +416,7 @@ This is the final level. Congratulations on completing our level road! We're wor
 
     @commands.command()
     async def xp(self, ctx: commands.Context):
+        level = 0 
         async with self.bot.db.acquire() as conn:
             record = await conn.fetch(
                 '''
@@ -422,7 +425,25 @@ This is the final level. Congratulations on completing our level road! We're wor
                 ctx.author.id,
             )
             xp = [x['xp'] for x in record][0]
-        await ctx.send(xp)
+            record = await conn.fetch(
+                '''
+                SELECT ROW_NUMBER () OVER (ORDER BY xp DESC) FROM levels WHERE id = $1
+                ''',
+                ctx.author.id
+            )
+            pos = [x['row_number'] for x in record][0]
+        for x in self.thresholds:
+            if xp > x:
+                level += 1
+        rank = self.names[level]
+        if level != 0:
+            percent = math.floor(((xp-self.thresholds[level-1])/(self.thresholds[level]-self.thresholds[level-1]))*100)
+        progressbar = f"{'<:p1:828359003712127068>' * math.floor(percent/10)}{'<:p2:828359003897593946>' * (10-math.floor(percent/10))}"
+        desc = f'''**{rank}** ({xp} <:p_:828359003775303702>)
+        {percent}% to next level
+        {progressbar}'''
+        embed = Embed(title=f'{ctx.author.name} (Rank #{pos})', description=desc).set_thumbnail(url=str(ctx.author.avatar.url))
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def doublexp(self, ctx: commands.Context, message: str = None):
@@ -493,7 +514,6 @@ This is the final level. Congratulations on completing our level road! We're wor
             except (discord.errors.NotFound, AttributeError) as e:
                 user = "User left."
             string += f"{num}. {user} - **{x['xp']}** <:p_:828359003775303702>\n"
-            #string += f"{num}. {x['id']} - **{x['xp']}** <:p_:828359003775303702>\n"
             num += 1
         embed = Embed(
             title = '**Points leaderboard**', description=string
