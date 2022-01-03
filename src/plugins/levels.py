@@ -459,6 +459,7 @@ This is the final level. Congratulations on completing our level road! We're wor
             await ctx.send(f'Set <@{set[0]}>\'s XP to {set[1]}.')
 
     @commands.command()
+    @commands.cooldown(1, 15, commands.BucketType.user)
     async def leaderboard(self, ctx: commands.Context, *, args = None):
         string = ""
         num = 1
