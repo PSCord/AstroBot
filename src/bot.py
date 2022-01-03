@@ -19,6 +19,7 @@ EXTENSIONS = {
     'src.plugins.levels',
     'src.plugins.info',
     'src.plugins.boosters',
+    'src.plugins.events',
 }
 
 

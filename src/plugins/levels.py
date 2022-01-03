@@ -25,14 +25,14 @@ class Levels(commands.Cog):
 
     double = False
 
-    async def cog_before_invoke(self, ctx):
-        async with self.bot.db.acquire() as conn:
-            record = await conn.fetch(
-                '''
-                SELECT doublexp FROM options WHERE beep = 'boop'
-                '''
-            )
-            self.double = [x['doublexp'] for x in record][0]
+    #async def cog_before_invoke(self, ctx):
+    #   async with self.bot.db.acquire() as conn:
+    #        record = await conn.fetch(
+    #            '''
+    #            SELECT doublexp FROM options WHERE beep = 'boop'
+    #            '''
+    #        )
+    #        self.double = [x['doublexp'] for x in record][0]
 
     levelup = [
         (
@@ -350,6 +350,13 @@ This is the final level. Congratulations on completing our level road! We're wor
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        async with self.bot.db.acquire() as conn:
+            record = await conn.fetch(
+                '''
+                SELECT doublexp FROM options WHERE beep = 'boop'
+                '''
+            )
+            self.double = [x['doublexp'] for x in record][0]
         if message.guild.id != self.main_server:
             return
         else:
@@ -382,7 +389,9 @@ This is the final level. Congratulations on completing our level road! We're wor
                         ''',
                         message.author.id,
                     )
-                    xp = [x['xp'] for x in record][0]
+                    if record:
+                        xp = [x['xp'] for x in record][0]
+                    else: xp = None
                 if xp in self.thresholds:
                     index = self.thresholds.index(xp)
                     await message.author.send(embed=self.levelup[index])
