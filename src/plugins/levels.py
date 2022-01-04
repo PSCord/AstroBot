@@ -527,7 +527,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                     LIMIT 10
                     OFFSET $1
                     ''',
-                    int(args) * 10,
+                    (int(args) -1) * 10,
                 )
                 num = num + (int(args) - 1) * 10
         for x in record:
