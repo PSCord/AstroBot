@@ -414,7 +414,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                     member.id,
                 )
 
-    @commands.command()
+    @commands.command(brief='Check your XP & more.', help='See your current XP, rank, and progress to next level.')
     async def xp(self, ctx: commands.Context):
         level = 0 
         async with self.bot.db.acquire() as conn:
@@ -445,7 +445,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         embed = Embed(title=f'{ctx.author.name} (Rank #{pos})', description=desc).set_thumbnail(url=str(ctx.author.avatar.url))
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(brief='Enable or disable double xp.', help='*doublexp toggle')
     @commands.has_permissions(administrator=True)
     async def doublexp(self, ctx: commands.Context, message: str = None):
         if message == 'toggle':
@@ -462,7 +462,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         else:
             await ctx.send(self.double)
 
-    @commands.command()
+    @commands.command(brief='Set a person\'s xp.', help='*setxp id xp')
     @commands.has_permissions(administrator=True)
     async def setxp(self, ctx: commands.Context, *, args):
         if args is not None:
@@ -481,7 +481,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 )
             await ctx.send(f'Set <@{set[0]}>\'s XP to {set[1]}.')
 
-    @commands.command()
+    @commands.command(brief='See the top users by XP.', help='Put a number between one and ten after *leaderboard to see that page of the leaderboard. 15 second cooldown.')
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def leaderboard(self, ctx: commands.Context, *, args = None):
         string = ""

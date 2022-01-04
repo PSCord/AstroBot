@@ -55,7 +55,7 @@ class Boosters(commands.Cog):
                 await before.remove_roles(*roles, reason='Stopped boosting.')
                 await self.boost_log.send(f'{before.mention} stopped boosting.')
 
-    @commands.command(aliases=['color'])
+    @commands.command(aliases=['color'], brief='Choose a custom colour role.', help='Platinum and booster users can select their own colour role with *colour [colour]. The colours available can be seen with *colour, or you can clear your colour with *colour clear.')
     async def colour(self, ctx: commands.Context, message: str = None):
         boost_role = get(ctx.guild.roles, id=905864474538438788)
         plat = get(ctx.guild.roles, id=904116235237752832)

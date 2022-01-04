@@ -115,7 +115,7 @@ class Events(commands.Cog):
                         )
                 self.event_cooldown[message.author.id] = time.time()
 
-    @commands.command()
+    @commands.command(brief='Enable or conclude event mode.', help='Start an event with *eventmode enable roleid')
     @commands.has_permissions(administrator=True)
     async def eventmode(self, ctx: commands.Context, *, args = None):
         if args is not None:

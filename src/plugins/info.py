@@ -36,7 +36,7 @@ class Info(commands.Cog):
         'discord_certified_moderator': '<:dcmbadge:904389152966070294>',
     }
 
-    @commands.command()
+    @commands.command(brief='A bunch of stats about yourself.', help='Your join position, badges, ID, time since join, and time since account creation.')
     async def info(self, ctx: commands.Context):
         pos = sum(m.joined_at < ctx.author.joined_at for m in ctx.guild.members)
         desc = ''
