@@ -535,7 +535,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 )
                 num = num + (int(args) - 1) * 10
         elif int(args) > 10:
-            return ctx.send(content='Only pages 1-10 of the leaderboard are available.')
+            return await ctx.send(content='Only pages 1-10 of the leaderboard are available.')
         for x in record:
             try:
                 user = self.bot.get_guild(860585050838663188).get_member(x['id'])
