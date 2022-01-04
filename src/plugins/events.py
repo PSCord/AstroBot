@@ -116,6 +116,7 @@ class Events(commands.Cog):
                 self.event_cooldown[message.author.id] = time.time()
 
     @commands.command()
+    @commands.has_permissions(administrator=True)
     async def eventmode(self, ctx: commands.Context, *, args = None):
         if args is not None:
             set = args.split(' ')

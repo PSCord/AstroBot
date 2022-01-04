@@ -446,6 +446,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.has_permissions(administrator=True)
     async def doublexp(self, ctx: commands.Context, message: str = None):
         if message == 'toggle':
             async with self.bot.db.acquire() as conn:
@@ -462,6 +463,7 @@ This is the final level. Congratulations on completing our level road! We're wor
             await ctx.send(self.double)
 
     @commands.command()
+    @commands.has_permissions(administrator=True)
     async def setxp(self, ctx: commands.Context, *, args):
         if args is not None:
             set = args.split(' ')
