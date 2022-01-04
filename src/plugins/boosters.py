@@ -21,7 +21,6 @@ log = logging.getLogger(__name__)
 class Boosters(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
-        self.boost_log = bot.get_channel(876496435493888100)
 
 
     colour_names = ['forest', 'porpule', 'purple', 'skyblue', 'blue', 'mint', 'black', 'pink', 'ghost']
@@ -47,6 +46,7 @@ class Boosters(commands.Cog):
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         if before.guild.id == 860585050838663188:
+            boost_log = self.bot.get_channel(876496435493888100)
             if after.premium_since and not before.premium_since:
                 await after.send(embed=self.thank_boost)
                 await self.boost_log.send(f'{before.mention} started boosting.')
@@ -55,7 +55,7 @@ class Boosters(commands.Cog):
                 await before.remove_roles(*roles, reason='Stopped boosting.')
                 await self.boost_log.send(f'{before.mention} stopped boosting.')
 
-    @commands.command()
+    @commands.command(aliases=['color'])
     async def colour(self, ctx: commands.Context, message: str = None):
         boost_role = get(ctx.guild.roles, id=905864474538438788)
         plat = get(ctx.guild.roles, id=904116235237752832)
@@ -79,10 +79,6 @@ class Boosters(commands.Cog):
                 await ctx.send(embed=self.colour_embed)
         else:
             await ctx.send('<:question:747469232408625314> **You don\'t meet the requirements to use this command.**\nIn order to be able to choose your color, you must have **30,000** XP points or be a booster. See <#719536356727980032> for more information.')
-
-    @commands.command()
-    async def color(self, ctx: commands.Context, message: str = None):
-        await ctx.send('go away mini')
 
 def setup(bot: AstroBot):
     bot.add_cog(Boosters(bot))
