@@ -21,6 +21,7 @@ EXTENSIONS = {
     'src.plugins.boosters',
     'src.plugins.events',
     'src.plugins.pronouns',
+    'src.plugins.logs',
 }
 
 
@@ -39,7 +40,6 @@ class AstroBot(commands.Bot):
             case_insensitive=True,
             command_prefix='!',
             intents=intents,
-            max_messages=None,
         )
 
         self.db: Optional[asyncpg.Pool] = None
