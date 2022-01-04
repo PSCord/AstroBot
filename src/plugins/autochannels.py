@@ -83,9 +83,9 @@ class Autochannels(commands.Cog):
     async def blog(self):
         blog_channel = self.bot.get_channel(876496435493888100)
         feed = feedparser.parse('http://feeds.feedburner.com/psblog')
-        if self.link != feed.entries[0].feedburner_origlink:
-            await blog_channel.send(content=feed.entries[0].feedburner_origlink)
-            self.link = feed.entries[0].feedburner_origlink
+        if self.link != feed.entries[0].link:
+            await blog_channel.send(content=feed.entries[0].link)
+            self.link = feed.entries[0].link
 
     @blog.before_loop
     async def before_blog(self):
