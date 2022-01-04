@@ -20,6 +20,7 @@ EXTENSIONS = {
     'src.plugins.info',
     'src.plugins.boosters',
     'src.plugins.events',
+    'src.plugins.pronouns',
 }
 
 
