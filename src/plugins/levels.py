@@ -440,11 +440,12 @@ This is the final level. Congratulations on completing our level road! We're wor
             xp = [x['xp'] for x in record][0]
             record = await conn.fetch(
                 '''
-                SELECT ROW_NUMBER () OVER (ORDER BY xp DESC) FROM levels WHERE id = $1
+                SELECT id, ROW_NUMBER () OVER (ORDER BY xp DESC) FROM levels
                 ''',
-                ctx.author.id,
             )
-            pos = [x['row_number'] for x in record][0]
+            for x in record:
+                if x['id'] == ctx.author.id:
+                    pos = x['row_number']
         for x in self.thresholds:
             if xp > x:
                 level += 1
