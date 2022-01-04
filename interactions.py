@@ -1,5 +1,6 @@
 import requests
 
+
 GUILD_ID = 860585050838663188
 
 APPLICATION_ID = 848926333256859670
@@ -39,41 +40,41 @@ VALID_PRONOUNS = [
     {
         'name': 'Any Pronoun',
         'value': 'Any Pronoun',
-    }
+    },
 ]
 pronouns = {
-  'name': 'pronouns',
-  'description': 'Choose which pronoun roles you have in the server.',
-  'options': [
-    {
-      'name': 'add',
-      'description': 'Add a pronoun role to yourself.',
-      'type': 1,
-      'options': [
+    'name': 'pronouns',
+    'description': 'Choose which pronoun roles you have in the server.',
+    'options': [
         {
-          'name': 'pronoun',
-          'description': 'The pronoun you want to add.',
-          'type': 3,
-          'required': True,
-          'choices': VALID_PRONOUNS,
-        }
-      ]
-    },
-    {
-      'name': 'remove',
-      'description': 'Remove a pronoun role from yourself.',
-      'type': 1,
-      'options': [
+            'name': 'add',
+            'description': 'Add a pronoun role to yourself.',
+            'type': 1,
+            'options': [
+                {
+                    'name': 'pronoun',
+                    'description': 'The pronoun you want to add.',
+                    'type': 3,
+                    'required': True,
+                    'choices': VALID_PRONOUNS,
+                }
+            ],
+        },
         {
-          'name': 'pronoun',
-          'description': 'The pronoun you want to remove.',
-          'type': 3,
-          'required': True,
-          'choices': VALID_PRONOUNS,
-        }
-      ]
-    }
-  ],
+            'name': 'remove',
+            'description': 'Remove a pronoun role from yourself.',
+            'type': 1,
+            'options': [
+                {
+                    'name': 'pronoun',
+                    'description': 'The pronoun you want to remove.',
+                    'type': 3,
+                    'required': True,
+                    'choices': VALID_PRONOUNS,
+                }
+            ],
+        },
+    ],
 }
 
 create_command(pronouns)

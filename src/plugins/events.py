@@ -37,8 +37,7 @@ class Events(commands.Cog):
         )
     )
 
-
-    #async def cog_before_invoke(self, ctx):
+    # async def cog_before_invoke(self, ctx):
     #    async with self.bot.db.acquire() as conn:
     #        record = await conn.fetch(
     #            '''
@@ -89,7 +88,8 @@ class Events(commands.Cog):
                     )
                     if record:
                         count = [x['event'] for x in record][0]
-                    else: count = None
+                    else:
+                        count = None
                 if record and count < 15:
                     async with self.bot.db.acquire() as conn:
                         await conn.execute(
@@ -117,7 +117,7 @@ class Events(commands.Cog):
 
     @commands.command(brief='Enable or conclude event mode.', help='Start an event with *eventmode enable roleid')
     @commands.has_permissions(administrator=True)
-    async def eventmode(self, ctx: commands.Context, *, args = None):
+    async def eventmode(self, ctx: commands.Context, *, args=None):
         if args is not None:
             set = args.split(' ')
             if set[0] == 'enable' and len(set) == 2:
@@ -125,7 +125,8 @@ class Events(commands.Cog):
                     await ctx.send('Event mode is already enabled.')
                 else:
                     role = get(ctx.guild.roles, id=int(set[1]))
-                    if not role: return await ctx.send('Please provide the right role ID.')
+                    if not role:
+                        return await ctx.send('Please provide the right role ID.')
                     async with self.bot.db.acquire() as conn:
                         await conn.execute(
                             '''
@@ -140,7 +141,7 @@ class Events(commands.Cog):
                                     eventroleid = $1
                             WHERE beep = 'boop';
                             ''',
-                            int(set[1])
+                            int(set[1]),
                         )
                     self.event_mode = True
                     await ctx.send('Enabled event mode')
@@ -165,6 +166,7 @@ class Events(commands.Cog):
                 await ctx.send('That\'s not one of the two options.')
         else:
             await ctx.send(self.event_mode)
+
 
 def setup(bot: AstroBot):
     bot.add_cog(Events(bot))

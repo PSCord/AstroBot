@@ -26,7 +26,7 @@ class Pronouns(commands.Cog):
         'He/Him': 927717432691408977,
         'They/Them': 927717436806021210,
         'Ask for Pronoun': 927717447442771969,
-        'Any Pronoun': 927717450856943636
+        'Any Pronoun': 927717450856943636,
     }
 
     @commands.Cog.listener()
@@ -41,9 +41,10 @@ class Pronouns(commands.Cog):
                 role = get(interaction.guild.roles, id=self.roles[data['options'][0]['value']])
                 await interaction.user.remove_roles(role, reason='Request via slash command.')
                 content = f"Your {data['options'][0]['value']} pronoun role has been removed."
-            
+
             content += "\nAs a reminder, please message Modmail should you experience or observe any harassment."
             await interaction.response.send_message(content=content, ephemeral=True)
+
 
 def setup(bot: AstroBot):
     bot.add_cog(Pronouns(bot))

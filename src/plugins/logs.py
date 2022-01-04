@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import datetime
 import logging
 import time
-import datetime
 from typing import TYPE_CHECKING
 
 from discord.ext import commands
@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__name__)
 
+
 class Logs(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
@@ -28,12 +29,17 @@ class Logs(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         if message.guild.id == 860585050838663188:
-            await self.backup_log(f"🗑 **{message.author}** ({message.author.id} / {message.author.mention}) deleted their message ({message.id}) at **[d]** in {message.channel.mention}> (**{message.channel.name}**, {message.channel.id}) ```{message.content}```")
+            await self.backup_log(
+                f"🗑 **{message.author}** ({message.author.id} / {message.author.mention}) deleted their message ({message.id}) at **[d]** in {message.channel.mention}> (**{message.channel.name}**, {message.channel.id}) ```{message.content}```"
+            )
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
         if after.guild.id == 860585050838663188 and before.content != after.content:
-            await self.backup_log(f"✏ **{before.author}** ({before.author.id} / {before.author.mention}) edited their message ({before.id}) at **[d]** in {before.channel.mention} (**{before.channel.name}**, {before.channel.id}) ```{before.content}``` to ```{after.content}```")
+            await self.backup_log(
+                f"✏ **{before.author}** ({before.author.id} / {before.author.mention}) edited their message ({before.id}) at **[d]** in {before.channel.mention} (**{before.channel.name}**, {before.channel.id}) ```{before.content}``` to ```{after.content}```"
+            )
+
 
 def setup(bot: AstroBot):
     bot.add_cog(Logs(bot))

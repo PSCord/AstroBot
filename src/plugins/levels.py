@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import discord
 import logging
+import math
 import os
 import time
-import math
 from typing import TYPE_CHECKING
 
 import asyncpg
+import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 
@@ -27,7 +27,7 @@ class Levels(commands.Cog):
 
     double = False
 
-    #async def cog_before_invoke(self, ctx):
+    # async def cog_before_invoke(self, ctx):
     #   async with self.bot.db.acquire() as conn:
     #        record = await conn.fetch(
     #            '''
@@ -342,7 +342,19 @@ This is the final level. Congratulations on completing our level road! We're wor
         904116212043235339,
         904116235237752832,
     ]
-    names = ['None', 'Bronze 1', 'Bronze 2', 'Bronze 3', 'Silver 1', 'Silver 2,', 'Silver 3', 'Gold 1', 'Gold 2', 'Gold 3', 'Platinum']
+    names = [
+        'None',
+        'Bronze 1',
+        'Bronze 2',
+        'Bronze 3',
+        'Silver 1',
+        'Silver 2,',
+        'Silver 3',
+        'Gold 1',
+        'Gold 2',
+        'Gold 3',
+        'Platinum',
+    ]
     main_server = 860585050838663188
     xp_cooldown = {}
 
@@ -394,7 +406,8 @@ This is the final level. Congratulations on completing our level road! We're wor
                     )
                     if record:
                         xp = [x['xp'] for x in record][0]
-                    else: xp = None
+                    else:
+                        xp = None
                 if xp in self.thresholds:
                     index = self.thresholds.index(xp)
                     await message.author.send(embed=self.levelup[index])
@@ -416,7 +429,7 @@ This is the final level. Congratulations on completing our level road! We're wor
 
     @commands.command(brief='Check your XP & more.', help='See your current XP, rank, and progress to next level.')
     async def xp(self, ctx: commands.Context):
-        level = 0 
+        level = 0
         async with self.bot.db.acquire() as conn:
             record = await conn.fetch(
                 '''
@@ -429,7 +442,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 '''
                 SELECT ROW_NUMBER () OVER (ORDER BY xp DESC) FROM levels WHERE id = $1
                 ''',
-                ctx.author.id
+                ctx.author.id,
             )
             pos = [x['row_number'] for x in record][0]
         for x in self.thresholds:
@@ -437,12 +450,16 @@ This is the final level. Congratulations on completing our level road! We're wor
                 level += 1
         rank = self.names[level]
         if level != 0:
-            percent = math.floor(((xp-self.thresholds[level-1])/(self.thresholds[level]-self.thresholds[level-1]))*100)
+            percent = math.floor(
+                ((xp - self.thresholds[level - 1]) / (self.thresholds[level] - self.thresholds[level - 1])) * 100
+            )
         progressbar = f"{'<:p1:828359003712127068>' * math.floor(percent/10)}{'<:p2:828359003897593946>' * (10-math.floor(percent/10))}"
         desc = f'''**{rank}** ({xp} <:p_:828359003775303702>)
         {percent}% to next level
         {progressbar}'''
-        embed = Embed(title=f'{ctx.author.name} (Rank #{pos})', description=desc).set_thumbnail(url=str(ctx.author.avatar.url))
+        embed = Embed(title=f'{ctx.author.name} (Rank #{pos})', description=desc).set_thumbnail(
+            url=str(ctx.author.avatar.url)
+        )
         await ctx.send(embed=embed)
 
     @commands.command(brief='Enable or disable double xp.', help='*doublexp toggle')
@@ -481,9 +498,12 @@ This is the final level. Congratulations on completing our level road! We're wor
                 )
             await ctx.send(f'Set <@{set[0]}>\'s XP to {set[1]}.')
 
-    @commands.command(brief='See the top users by XP.', help='Put a number between one and ten after *leaderboard to see that page of the leaderboard. 15 second cooldown.')
+    @commands.command(
+        brief='See the top users by XP.',
+        help='Put a number between one and ten after *leaderboard to see that page of the leaderboard. 15 second cooldown.',
+    )
     @commands.cooldown(1, 15, commands.BucketType.user)
-    async def leaderboard(self, ctx: commands.Context, *, args = None):
+    async def leaderboard(self, ctx: commands.Context, *, args=None):
         string = ""
         num = 1
         if args is None or args == 1:
@@ -506,7 +526,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                     LIMIT 10
                     OFFSET $1
                     ''',
-                    int(args) * 10
+                    int(args) * 10,
                 )
                 num = num + (int(args) - 1) * 10
         for x in record:
@@ -517,9 +537,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 user = "User left."
             string += f"{num}. {user} - **{x['xp']}** <:p_:828359003775303702>\n"
             num += 1
-        embed = Embed(
-            title = '**Points leaderboard**', description=string
-        )
+        embed = Embed(title='**Points leaderboard**', description=string)
         await ctx.send(embed=embed)
 
 

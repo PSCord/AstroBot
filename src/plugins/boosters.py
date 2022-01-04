@@ -22,9 +22,18 @@ class Boosters(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
 
-
     colour_names = ['forest', 'porpule', 'purple', 'skyblue', 'blue', 'mint', 'black', 'pink', 'ghost']
-    colour_roles = [905129271662641193, 905129293460439061, 905129304759861248, 905129309100978196, 905129310485110807, 905129313169444945, 905129315551830017, 905129318043226223, 905129320081657936]
+    colour_roles = [
+        905129271662641193,
+        905129293460439061,
+        905129304759861248,
+        905129309100978196,
+        905129310485110807,
+        905129313169444945,
+        905129315551830017,
+        905129318043226223,
+        905129320081657936,
+    ]
 
     thank_boost = (
         Embed(
@@ -35,13 +44,10 @@ class Boosters(commands.Cog):
         .set_footer(text='PlayStation', icon_url='https://cdn.discordapp.com/emojis/721384207213002783.png')
     )
 
-    colour_embed = (
-        Embed(
-            title='Colour Roles',
-            description='Enter the name of the color you\'d like to pick, e.g. `blue`, or `clear` to remove it.',
-        )
-        .set_image(url='https://cdn.discordapp.com/attachments/827704409730973719/830249843565527080/colors.png')
-    )
+    colour_embed = Embed(
+        title='Colour Roles',
+        description='Enter the name of the color you\'d like to pick, e.g. `blue`, or `clear` to remove it.',
+    ).set_image(url='https://cdn.discordapp.com/attachments/827704409730973719/830249843565527080/colors.png')
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
@@ -55,16 +61,20 @@ class Boosters(commands.Cog):
                 await before.remove_roles(*roles, reason='Stopped boosting.')
                 await self.boost_log.send(f'{before.mention} stopped boosting.')
 
-    @commands.command(aliases=['color'], brief='Choose a custom colour role.', help='Platinum and booster users can select their own colour role with *colour [colour]. The colours available can be seen with *colour, or you can clear your colour with *colour clear.')
+    @commands.command(
+        aliases=['color'],
+        brief='Choose a custom colour role.',
+        help='Platinum and booster users can select their own colour role with *colour [colour]. The colours available can be seen with *colour, or you can clear your colour with *colour clear.',
+    )
     async def colour(self, ctx: commands.Context, message: str = None):
         boost_role = get(ctx.guild.roles, id=905864474538438788)
         plat = get(ctx.guild.roles, id=904116235237752832)
         if boost_role in ctx.author.roles or plat in ctx.author.roles:
             if message:
                 if message == 'clear':
-                        roles = tuple(get(ctx.guild.roles, id=x) for x in self.colour_roles)
-                        await ctx.author.remove_roles(*roles, reason='Requested to clear colours.')
-                        await ctx.send('<:check:684852990980522060> Colors updated.')
+                    roles = tuple(get(ctx.guild.roles, id=x) for x in self.colour_roles)
+                    await ctx.author.remove_roles(*roles, reason='Requested to clear colours.')
+                    await ctx.send('<:check:684852990980522060> Colors updated.')
                 else:
                     try:
                         num = self.colour_names.index(message)
@@ -78,7 +88,10 @@ class Boosters(commands.Cog):
             else:
                 await ctx.send(embed=self.colour_embed)
         else:
-            await ctx.send('<:question:747469232408625314> **You don\'t meet the requirements to use this command.**\nIn order to be able to choose your color, you must have **30,000** XP points or be a booster. See <#719536356727980032> for more information.')
+            await ctx.send(
+                '<:question:747469232408625314> **You don\'t meet the requirements to use this command.**\nIn order to be able to choose your color, you must have **30,000** XP points or be a booster. See <#719536356727980032> for more information.'
+            )
+
 
 def setup(bot: AstroBot):
     bot.add_cog(Boosters(bot))
