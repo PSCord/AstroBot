@@ -450,7 +450,11 @@ This is the final level. Congratulations on completing our level road! We're wor
             if xp > x:
                 level += 1
         rank = self.names[level]
-        if level != 0:
+        if level == 0:
+            percent = math.floor(xp/250)
+        elif level == 10:
+            percent = 100
+        else:
             percent = math.floor(
                 ((xp - self.thresholds[level - 1]) / (self.thresholds[level] - self.thresholds[level - 1])) * 100
             )
