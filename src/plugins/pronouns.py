@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from discord.ext import commands
 from discord.utils import get
+from discord import InteractionType
 
 from .. import Embed
 
@@ -31,7 +32,7 @@ class Pronouns(commands.Cog):
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
-        if interaction.data['name'] == 'pronouns':
+        if interaction.type == InteractionType.application_command and interaction.data['name'] == 'pronouns':
             data = interaction.data['options'][0]
             if data['name'] == 'add':
                 role = get(interaction.guild.roles, id=self.roles[data['options'][0]['value']])
