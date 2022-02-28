@@ -439,7 +439,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                     DELETE FROM levels
                     WHERE id = $1
                     ''',
-                    user.id
+                    user.id,
                 )
             await logger.send(f'**XP Wiped:** {user.mention} ({user.id}): {xp}')
 
@@ -472,7 +472,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 level += 1
         rank = self.names[level]
         if level == 0:
-            percent = math.floor(xp/250)
+            percent = math.floor(xp / 250)
         elif level == 10:
             percent = 100
         else:
@@ -552,7 +552,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                     LIMIT 10
                     OFFSET $1
                     ''',
-                    (int(args) -1) * 10,
+                    (int(args) - 1) * 10,
                 )
                 num = num + (int(args) - 1) * 10
         else:

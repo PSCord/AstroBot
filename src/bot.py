@@ -22,7 +22,7 @@ EXTENSIONS = {
     'src.plugins.events',
     'src.plugins.pronouns',
     'src.plugins.logs',
-    'src.plugins.mods'
+    'src.plugins.mods',
 }
 
 

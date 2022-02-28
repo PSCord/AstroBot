@@ -4,9 +4,9 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
+from discord import InteractionType
 from discord.ext import commands
 from discord.utils import get
-from discord import InteractionType
 
 from .. import Embed
 
