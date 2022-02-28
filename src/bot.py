@@ -34,6 +34,7 @@ class AstroBot(commands.Bot):
             guilds=True,
             members=True,
             guild_messages=True,
+            bans=True,
         )
 
         super().__init__(

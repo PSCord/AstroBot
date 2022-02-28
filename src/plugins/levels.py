@@ -363,6 +363,20 @@ This is the final level. Congratulations on completing our level road! We're wor
             return False
         return self.xp_cooldown[id] + 15 > time.time()
 
+    async def get_xp(self, id):
+        async with self.bot.db.acquire() as conn:
+            record = await conn.fetch(
+                '''
+                SELECT xp FROM levels WHERE id = $1
+                ''',
+                id,
+            )
+            if record:
+                xp = [x['xp'] for x in record][0]
+            else:
+                xp = None
+        return xp
+
     @commands.Cog.listener()
     async def on_message(self, message):
         async with self.bot.db.acquire() as conn:
@@ -375,6 +389,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         if message.guild.id != self.main_server:
             return
         else:
+            xp = await self.get_xp(message.author.id)
             if not self.cooldown(message.author.id) and not message.author.bot:
                 if self.double:
                     async with self.bot.db.acquire() as conn:
@@ -383,6 +398,14 @@ This is the final level. Congratulations on completing our level road! We're wor
                             UPDATE levels
                                 SET xp = xp + 2
                             WHERE id = $1
+                            ''',
+                            message.author.id,
+                        )
+                elif xp == None:
+                    async with self.bot.db.acquire() as conn:
+                        await conn.execute(
+                            '''
+                            INSERT INTO levels (id, xp, lvl) VALUES ($1, 1, 0)
                             ''',
                             message.author.id,
                         )
@@ -397,17 +420,6 @@ This is the final level. Congratulations on completing our level road! We're wor
                             message.author.id,
                         )
                 self.xp_cooldown[message.author.id] = time.time()
-                async with self.bot.db.acquire() as conn:
-                    record = await conn.fetch(
-                        '''
-                        SELECT xp FROM levels WHERE id = $1
-                        ''',
-                        message.author.id,
-                    )
-                    if record:
-                        xp = [x['xp'] for x in record][0]
-                    else:
-                        xp = None
                 if xp in self.thresholds:
                     index = self.thresholds.index(xp)
                     await message.author.send(embed=self.levelup[index])
@@ -417,27 +429,36 @@ This is the final level. Congratulations on completing our level road! We're wor
                     await message.author.add_roles(role, reason='Leveled up.')
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member):
-        if member.guild == 860585050838663188:
+    async def on_member_ban(self, guild, user):
+        if guild.id == self.main_server:
+            xp = await self.get_xp(user.id)
+            logger = self.bot.get_channel(876496435493888100)
             async with self.bot.db.acquire() as conn:
                 await conn.execute(
                     '''
-                    INSERT INTO levels (id, xp, lvl) VALUES ($1, 0, 0)
+                    DELETE FROM levels
+                    WHERE id = $1
                     ''',
-                    member.id,
+                    user.id
                 )
+            await logger.send(f'**XP Wiped:** {user.mention} ({user.id}): {xp}')
+
+    # @commands.Cog.listener()
+    # async def on_member_join(self, member: discord.Member):
+    #     if member.guild == 860585050838663188:
+    #         async with self.bot.db.acquire() as conn:
+    #             await conn.execute(
+    #                 '''
+    #                 INSERT INTO levels (id, xp, lvl) VALUES ($1, 0, 0)
+    #                 ''',
+    #                 member.id,
+    #             )
 
     @commands.command(brief='Check your XP & more.', help='See your current XP, rank, and progress to next level.')
     async def xp(self, ctx: commands.Context):
         level = 0
         async with self.bot.db.acquire() as conn:
-            record = await conn.fetch(
-                '''
-                SELECT xp FROM levels WHERE id = $1
-                ''',
-                ctx.author.id,
-            )
-            xp = [x['xp'] for x in record][0]
+            xp = await self.get_xp(ctx.author.id)
             record = await conn.fetch(
                 '''
                 SELECT id, ROW_NUMBER () OVER (ORDER BY xp DESC) FROM levels
