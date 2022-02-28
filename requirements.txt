@@ -7,3 +7,4 @@ psutil==5.8.0
 uvloop==0.15.3
 feedparser==6.0.8
 python-dateutil==2.8.2
+requests==2.27.1

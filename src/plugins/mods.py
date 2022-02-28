@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 from discord import ChannelType, ButtonStyle, InteractionType
 from discord.ui import View, Button
 from discord.ext import commands
+from requests import get
+import re
 
 from .. import Embed
 
@@ -56,6 +58,15 @@ class Mods(commands.Cog):
                 await interaction.edit_original_message(content=f'**Created** ~~{interaction.message.content}~~', view=self.view_done)
             elif interaction.data['custom_id'] == 'no':
                 await interaction.edit_original_message(content=f'**Veto\'d** ~~{interaction.message.content}~~', view=self.view_done)
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.guild.id == 860585050838663188:
+            link = re.search("([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])", message.content)
+            if link:
+                log.info(f'https://api.hyperphish.com/check-domain/{link.group()}')
+                response = get(f'https://api.hyperphish.com/check-domain/{link.group()}')
+                log.info(response.text)
 
 
 def setup(bot: AstroBot):
