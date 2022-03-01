@@ -3,6 +3,7 @@ import logging
 import os
 from typing import Optional
 
+import aiohttp
 import asyncpg
 import discord
 from discord.ext import commands
@@ -14,15 +15,16 @@ log = logging.getLogger(__name__)
 EXTENSIONS = {
     'jishaku',
     'src.plugins.autochannels',
-    'src.plugins.errors',
-    'src.plugins.welcome',
-    'src.plugins.levels',
-    'src.plugins.info',
     'src.plugins.boosters',
+    'src.plugins.errors',
     'src.plugins.events',
-    'src.plugins.pronouns',
+    'src.plugins.info',
+    'src.plugins.levels',
     'src.plugins.logs',
     'src.plugins.mods',
+    'src.plugins.phishing',
+    'src.plugins.pronouns',
+    'src.plugins.welcome',
 }
 
 
@@ -45,6 +47,7 @@ class AstroBot(commands.Bot):
         )
 
         self.db: Optional[asyncpg.Pool] = None
+        self.session: Optional[aiohttp.ClientSession] = None
 
     def run(self):
         super().run(os.environ['BOT_TOKEN'])
@@ -63,6 +66,8 @@ class AstroBot(commands.Bot):
                 await asyncio.sleep(seconds)
             else:
                 break
+
+        self.session = aiohttp.ClientSession(headers={'User-Agent': 'Astrobot/1.0 (+https://discord.gg/ps)'})
 
         for name in EXTENSIONS:
             self.load_extension(name)

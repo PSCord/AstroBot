@@ -8,9 +8,6 @@ from typing import TYPE_CHECKING
 from discord import ButtonStyle, ChannelType, InteractionType
 from discord.ext import commands
 from discord.ui import Button, View
-from requests import get
-
-from .. import Embed
 
 
 if TYPE_CHECKING:
@@ -70,15 +67,6 @@ class Mods(commands.Cog):
                 await interaction.edit_original_message(
                     content=f'**Veto\'d** ~~{interaction.message.content}~~', view=self.view_done
                 )
-
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.guild.id == 860585050838663188:
-            link = re.search("([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])", message.content)
-            if link:
-                log.info(f'https://api.hyperphish.com/check-domain/{link.group()}')
-                response = get(f'https://api.hyperphish.com/check-domain/{link.group()}')
-                log.info(response.text)
 
 
 def setup(bot: AstroBot):
