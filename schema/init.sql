@@ -3,6 +3,11 @@ CREATE TABLE IF NOT EXISTS levels (
   xp INTEGER,
   lvl INTEGER
 );
+CREATE TABLE IF NOT EXISTS events (
+  id BIGINT PRIMARY KEY,
+  eventroleid BIGINT,
+  xp INTEGER
+)
 CREATE TABLE IF NOT EXISTS options (
   beep TEXT DEFAULT 'boop',
   doublexp BOOLEAN DEFAULT FALSE,

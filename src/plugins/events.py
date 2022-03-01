@@ -6,6 +6,7 @@ import time
 from typing import TYPE_CHECKING
 
 import asyncpg
+from discord import Role
 from discord.ext import commands, tasks
 from discord.utils import get
 
@@ -77,95 +78,83 @@ class Events(commands.Cog):
             self.event_role = [x['eventroleid'] for x in record][0]
         if message.guild.id != self.main_server:
             return
-        elif self.event_mode and message.content != '!eventmode conclude':
+        elif self.event_mode:
             if not self.cooldown(message.author.id) and not message.author.bot:
                 async with self.bot.db.acquire() as conn:
                     record = await conn.fetch(
                         '''
-                        SELECT event FROM levels WHERE id = $1
+                        SELECT xp FROM events WHERE id = $1
                         ''',
                         message.author.id,
                     )
-                    if record:
-                        count = [x['event'] for x in record][0]
-                    else:
-                        count = None
-                if record and count < 15:
-                    async with self.bot.db.acquire() as conn:
-                        await conn.execute(
-                            '''
-                            UPDATE levels
-                                SET event = event + 1
-                            WHERE id = $1
-                            ''',
-                            message.author.id,
-                        )
-                elif count and count == 15:
+                if not record:
+                    return await conn.execute(
+                        '''
+                        INSERT INTO events VALUES ($1, $2, 1)
+                        ''',
+                        message.author.id, self.event_role
+                    )
+
+                xp = [x['xp'] for x in record][0]
+                if xp == 14:
                     role = get(message.guild.roles, id=self.event_role)
                     await message.author.add_roles(role, reason='15 event messages.')
                     await message.author.send(embed=self.event_embed)
-                    async with self.bot.db.acquire() as conn:
-                        await conn.execute(
-                            '''
-                            UPDATE levels
-                                SET event = event + 1
-                            WHERE id = $1
-                            ''',
-                            message.author.id,
-                        )
+
+                async with self.bot.db.acquire() as conn:
+                    await conn.execute(
+                        '''
+                        UPDATE events
+                            SET xp = xp + 1
+                        WHERE id = $1
+                        ''',
+                        message.author.id
+                    )
                 self.event_cooldown[message.author.id] = time.time()
 
     @commands.command(brief='Enable or conclude event mode.', help='Start an event with *eventmode enable roleid')
     @commands.has_permissions(administrator=True)
-    async def eventmode(self, ctx: commands.Context, *, args=None):
-        if args is not None:
-            set = args.split(' ')
-            if set[0] == 'enable' and len(set) == 2:
-                if self.event_mode:
-                    await ctx.send('Event mode is already enabled.')
-                else:
-                    role = get(ctx.guild.roles, id=int(set[1]))
-                    if not role:
-                        return await ctx.send('Please provide the right role ID.')
-                    async with self.bot.db.acquire() as conn:
-                        await conn.execute(
-                            '''
-                            ALTER TABLE levels
-                            ADD event INTEGER DEFAULT 0;
-                            '''
-                        )
-                        await conn.execute(
-                            '''
-                            UPDATE options
-                                SET eventmode = NOT eventmode,
-                                    eventroleid = $1
-                            WHERE beep = 'boop';
-                            ''',
-                            int(set[1]),
-                        )
-                    self.event_mode = True
-                    await ctx.send('Enabled event mode')
-            elif set[0] == 'conclude':
-                if not self.event_mode:
-                    await ctx.send('Event mode is not enabled.')
-                else:
-                    async with self.bot.db.acquire() as conn:
-                        await conn.execute(
-                            '''
-                            ALTER TABLE LEVELS
-                            DROP COLUMN event;
-                            UPDATE options
-                                SET eventmode = NOT eventmode,
-                                    eventroleid = 0
-                            WHERE beep = 'boop';
-                            '''
-                        )
-                    self.event_mode = False
-                    await ctx.send('Concluded event mode.')
+    async def eventmode(self, ctx: commands.Context, enabled: bool, role: Role = None):
+        if enabled:
+            if self.event_mode:
+                await ctx.send('Event mode is already enabled.')
             else:
-                await ctx.send('That\'s not one of the two options.')
+                async with self.bot.db.acquire() as conn:
+                    await conn.execute(
+                        '''
+                        UPDATE options
+                            SET eventmode = NOT eventmode,
+                                eventroleid = $1
+                        WHERE beep = 'boop';
+                        ''',
+                        role.id,
+                    )
+                self.event_mode = True
+                await ctx.send('Enabled event mode')
+        elif not enabled:
+            if not self.event_mode:
+                await ctx.send('Event mode is not enabled.')
+            else:
+                self.event_mode = False
+                async with self.bot.db.acquire() as conn:
+                    await conn.execute(
+                        '''
+                        DELETE FROM events
+                        WHERE eventroleid = $1
+                        ''',
+                        self.event_role
+                    )
+                    await conn.execute(
+                        '''
+                        UPDATE options
+                            SET eventmode = NOT eventmode,
+                                eventroleid = 0
+                        WHERE beep = 'boop';
+                        '''
+                    )
+                await ctx.send('Concluded event mode.')
         else:
-            await ctx.send(self.event_mode)
+            await ctx.send('That\'s not one of the two options.')
 
 
 def setup(bot: AstroBot):
