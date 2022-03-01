@@ -53,6 +53,8 @@ class Errors(commands.Cog):
             embed = Embed(title='User Input Error', description=str(error))
         elif isinstance(error, commands.BotMissingPermissions):
             embed = Embed(title='Permissions Configuration Error', description=str(error))
+        elif isinstance(error, commands.CommandOnCooldown):
+            embed = Embed(title='Command on cooldown.', description=str(f'You are on cooldown. Try again in {int(error.retry_after)} seconds.'))
 
         if embed is not None and can_send:
             try:
