@@ -10,6 +10,25 @@ services:
       - PSQL_DSN
       - BOT_TOKEN
       - JISHAKU_HIDE=true
+      - MAIN_GUILD
+      - SHE_HER
+      - HE_HIM
+      - THEY_THEM
+      - ASK
+      - ANY
+      - LEVEL_ROLES
+      - COLOUR_ROLES
+      - BOOST_ROLE
+      - BOOST_CHANNEL
+      - LEVELS_CHANNEL
+      - GAME_REVIEWS_CHANNEL
+      - PSN_FRIENDS_CHANNEL
+      - BLOG_CHANNEL
+      - ADMIN_CHANNEL
+      - TRENDING_CHANNEL
+      - LOG_CHANNEL
+      - WELCOME_CHANNEL
+      - DEVELOPMENT
 
   db:
     image: postgres:13-alpine

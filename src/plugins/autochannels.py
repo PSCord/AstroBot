@@ -4,6 +4,7 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
+from .. import get_from_environment
 import feedparser
 from discord.ext import commands, tasks
 
@@ -47,9 +48,9 @@ class Autochannels(commands.Cog):
             inline=False,
         )
     )
-
-    game_reviews = 867753068003328000
-    psn_friends = 867800438715449384
+    
+    game_reviews = get_from_environment('GAME_REVIEWS_CHANNEL', int)
+    psn_friends = get_from_environment('PSN_FRIENDS_CHANNEL', int)
     psn_friends_cooldown = {}
 
     def cooldown(self, id):
@@ -81,7 +82,7 @@ class Autochannels(commands.Cog):
 
     @tasks.loop(seconds=60.0)
     async def blog(self):
-        blog_channel = self.bot.get_channel(876496435493888100)
+        blog_channel = self.bot.get_channel(get_from_environment('BLOG_CHANNEL', int))
         feed = feedparser.parse('http://feeds.feedburner.com/psblog')
         if self.link != feed.entries[0].link:
             await blog_channel.send(content=feed.entries[0].link)
