@@ -37,29 +37,31 @@ class Info(commands.Cog):
     }
 
     @commands.command(
-        brief='A bunch of stats about yourself.',
+        brief='A bunch of stats about yourself or another.',
         help='Your join position, badges, ID, time since join, and time since account creation.',
     )
-    async def info(self, ctx: commands.Context):
-        pos = sum(m.joined_at < ctx.author.joined_at for m in ctx.guild.members)
+    async def info(self, ctx: commands.Context, user: discord.Member = None):
+        if not user:
+            user = ctx.author
+        pos = sum(m.joined_at < user.joined_at for m in ctx.guild.members) + 1
         desc = ''
-        for flag in iter(ctx.author.public_flags):
+        for flag in iter(user.public_flags):
             if flag[1]:
                 desc += f'{self.emoji[flag[0]]} '
-        desc += f'\n\nID `{ctx.author.id}`'
-        delta = relativedelta(datetime.datetime.now(datetime.timezone.utc), ctx.author.joined_at)
+        desc += f'\n\nID `{user.id}`'
+        delta = relativedelta(datetime.datetime.now(datetime.timezone.utc), user.joined_at)
         if delta.years == 0:
             desc += f'\nJoined **{delta.months}** months ago.'
         else:
             desc += f'\nJoined **{delta.years}** years and **{delta.months}** months ago.'
-        delta = relativedelta(datetime.datetime.now(datetime.timezone.utc), ctx.author.created_at)
+        delta = relativedelta(datetime.datetime.now(datetime.timezone.utc), user.created_at)
         if delta.years == 0:
             desc += f'\nCreated **{delta.months}** months ago.'
         else:
             desc += f'\nCreated **{delta.years}** years and **{delta.months}** months ago.'
 
-        infoembed = Embed(title=f'{ctx.author.name} (Member {pos})', description=desc).set_thumbnail(
-            url=str(ctx.author.avatar.url)
+        infoembed = Embed(title=f'{user.name} (Member {pos})', description=desc).set_thumbnail(
+            url=str(user.avatar.url)
         )
         await ctx.send(embed=infoembed)
 
