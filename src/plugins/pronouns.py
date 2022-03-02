@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import logging
-import time
 from typing import TYPE_CHECKING
 
 from discord import InteractionType
 from discord.ext import commands
 from discord.utils import get
 
-from .. import Embed, get_from_environment
+from .. import get_from_environment
 
 
 if TYPE_CHECKING:

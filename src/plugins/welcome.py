@@ -5,8 +5,9 @@ import time
 from typing import TYPE_CHECKING
 
 from discord.ext import commands
+import discord 
 
-from .. import Embed, get_from_environment
+from .. import get_from_environment
 
 
 if TYPE_CHECKING:
