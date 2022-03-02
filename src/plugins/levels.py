@@ -11,7 +11,7 @@ import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 
-from .. import Embed
+from .. import Embed, get_list, get_from_environment
 
 
 if TYPE_CHECKING:
@@ -329,19 +329,7 @@ This is the final level. Congratulations on completing our level road! We're wor
     ]
 
     thresholds = [250, 750, 1250, 2500, 5000, 7500, 10000, 15000, 20000, 30000]
-    # level_roles=[763810437593694238, 718538246069420124, 763810438210650185, 763810441570418738, 718538600559411252, 763810443130437683, 763810720881049641, 718538637490389133, 763810724509384774, 718538533668651040]
-    level_roles = [
-        904115857003778058,
-        904115901803155486,
-        904115930303442966,
-        904115976897974272,
-        904116096989266010,
-        904116124562632764,
-        904116155759882261,
-        904116183802974208,
-        904116212043235339,
-        904116235237752832,
-    ]
+    level_roles = get_list('LEVEL_ROLES')
     names = [
         'None',
         'Bronze 1',
@@ -355,7 +343,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         'Gold 3',
         'Platinum',
     ]
-    main_server = 860585050838663188
+    main_server = get_from_environment('MAIN_GUILD', int)
     xp_cooldown = {}
 
     def cooldown(self, id):
@@ -432,7 +420,7 @@ This is the final level. Congratulations on completing our level road! We're wor
     async def on_member_ban(self, guild, user):
         if guild.id == self.main_server:
             xp = await self.get_xp(user.id)
-            logger = self.bot.get_channel(876496435493888100)
+            logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
             async with self.bot.db.acquire() as conn:
                 await conn.execute(
                     '''
@@ -483,6 +471,8 @@ This is the final level. Congratulations on completing our level road! We're wor
         desc = f'''**{rank}** ({xp} <:p_:828359003775303702>)
         {percent}% to next level
         {progressbar}'''
+        if self.double:
+            desc = desc + '\n<a:astrodance3:790935872844857405> **Double XP activated!**'
         embed = Embed(title=f'{ctx.author.name} (Rank #{pos})', description=desc).set_thumbnail(
             url=str(ctx.author.avatar.url)
         )
@@ -490,28 +480,36 @@ This is the final level. Congratulations on completing our level road! We're wor
 
     @commands.command(brief='Enable or disable double xp.', help='*doublexp toggle')
     @commands.has_permissions(administrator=True)
-    async def doublexp(self, ctx: commands.Context, message: str = None):
-        if message == 'toggle':
+    async def doublexp(self, ctx: commands.Context, truthy: bool = None):
+        if truthy and not self.double:
             async with self.bot.db.acquire() as conn:
                 await conn.execute(
                     '''
                     UPDATE options
-                        SET doublexp = NOT doublexp
+                        SET doublexp = TRUE
                     WHERE beep = 'boop'
                     '''
                 )
-            self.double = not self.double
-            await ctx.send('Toggled double XP.')
+            self.double = True
+            await ctx.send('Double XP set to true')
+        elif not truthy and self.double:
+            async with self.bot.db.acquire() as conn:
+                await conn.execute(
+                    '''
+                    UPDATE options
+                        SET doublexp = FALSE
+                    WHERE beep = 'boop'
+                    '''
+                )
+                self.double = False
+                await ctx.send('Double xp set to false.')
         else:
-            await ctx.send(self.double)
+            await ctx.send(f'Try again. The current double xp status is: {self.double}')
 
     @commands.command(brief='Set a person\'s xp.', help='*setxp id xp')
     @commands.has_permissions(administrator=True)
-    async def setxp(self, ctx: commands.Context, *, args):
-        if args is not None:
-            set = args.split(' ')
-            if len(set) != 2:
-                return await ctx.send(f'Please give an ID and XP to set to, and only those.')
+    async def setxp(self, ctx: commands.Context, user: discord.User = None, xp: int = None):
+        if user and xp:
             async with self.bot.db.acquire() as conn:
                 await conn.execute(
                     '''
@@ -519,10 +517,13 @@ This is the final level. Congratulations on completing our level road! We're wor
                         SET xp = $1
                     WHERE id = $2
                     ''',
-                    int(set[1]),
-                    int(set[0]),
+                    xp,
+                    user.id,
                 )
-            await ctx.send(f'Set <@{set[0]}>\'s XP to {set[1]}.')
+            await ctx.send(f'Set {user.mention}\'s XP to {xp}.')
+        else:
+            await ctx.send(f'Please give an ID and XP to set to.')
+
 
     @commands.command(
         brief='See the top users by XP.',
@@ -559,7 +560,7 @@ This is the final level. Congratulations on completing our level road! We're wor
             return await ctx.send(content='Only pages 1-10 of the leaderboard are available.')
         for x in record:
             try:
-                user = self.bot.get_guild(860585050838663188).get_member(x['id'])
+                user = self.bot.get_guild(self.main_server).get_member(x['id'])
                 user = user.name
             except (discord.errors.NotFound, AttributeError) as e:
                 user = "User left."
