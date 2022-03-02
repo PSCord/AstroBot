@@ -415,6 +415,8 @@ This is the final level. Congratulations on completing our level road! We're wor
                     await message.author.remove_roles(role, reason='Leveled up.')
                     role = get(message.guild.roles, id=self.level_roles[index])
                     await message.author.add_roles(role, reason='Leveled up.')
+                    logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
+                    await logger.send(f'{message.author.mention} leveled up to {self.names[index+1]}')
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
@@ -460,7 +462,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 level += 1
         rank = self.names[level]
         if level == 0:
-            percent = math.floor(xp / 250)
+            percent = math.floor(xp*100/250)
         elif level == 10:
             percent = 100
         else:

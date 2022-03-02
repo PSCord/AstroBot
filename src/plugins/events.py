@@ -87,19 +87,22 @@ class Events(commands.Cog):
                         ''',
                         message.author.id,
                     )
-                if not record:
-                    return await conn.execute(
-                        '''
-                        INSERT INTO events VALUES ($1, $2, 1)
-                        ''',
-                        message.author.id, self.event_role
-                    )
-
-                xp = [x['xp'] for x in record][0]
+                    if not record:
+                        await conn.execute(
+                            '''
+                            INSERT INTO events VALUES ($1, $2, 1)
+                            ''',
+                            message.author.id, self.event_role
+                        )
+                        xp = 1
+                    else:
+                        xp = [x['xp'] for x in record][0]
                 if xp == 14:
                     role = get(message.guild.roles, id=self.event_role)
                     await message.author.add_roles(role, reason='15 event messages.')
                     await message.author.send(embed=self.event_embed)
+                    logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
+                    await logger.send(f'{message.author.mention} got the event role <@&{self.event_role}>')
 
                 async with self.bot.db.acquire() as conn:
                     await conn.execute(
