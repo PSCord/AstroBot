@@ -378,6 +378,7 @@ This is the final level. Congratulations on completing our level road! We're wor
             return
         else:
             if not self.cooldown(message.author.id) and not message.author.bot:
+                xp = await self.get_xp(message.author.id)
                 if self.double:
                     async with self.bot.db.acquire() as conn:
                         await conn.execute(
@@ -406,7 +407,6 @@ This is the final level. Congratulations on completing our level road! We're wor
                             ''',
                             message.author.id,
                         )
-                xp = await self.get_xp(message.author.id)
                 self.xp_cooldown[message.author.id] = time.time()
                 if xp in self.thresholds:
                     index = self.thresholds.index(xp)
