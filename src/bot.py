@@ -42,7 +42,7 @@ class AstroBot(commands.Bot):
         super().__init__(
             allowed_mentions=allowed_mentions,
             case_insensitive=True,
-            command_prefix='!',
+            command_prefix='*',
             intents=intents,
         )
 
