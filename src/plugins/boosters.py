@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import feedparser
 from discord.ext import commands
 from discord.utils import get
+from .. import get_from_environment, get_list
 
 from .. import Embed
 
@@ -23,17 +24,7 @@ class Boosters(commands.Cog):
         self.bot = bot
 
     colour_names = ['forest', 'porpule', 'purple', 'skyblue', 'blue', 'mint', 'black', 'pink', 'ghost']
-    colour_roles = [
-        905129271662641193,
-        905129293460439061,
-        905129304759861248,
-        905129309100978196,
-        905129310485110807,
-        905129313169444945,
-        905129315551830017,
-        905129318043226223,
-        905129320081657936,
-    ]
+    colour_roles = get_list('COLOUR_ROLES')
 
     thank_boost = (
         Embed(
@@ -51,8 +42,8 @@ class Boosters(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
-        if before.guild.id == 860585050838663188:
-            boost_log = self.bot.get_channel(876496435493888100)
+        if before.guild.id == get_from_environment('MAIN_GUILD', int):
+            boost_log = self.bot.get_channel(get_from_environment('BOOST_CHANNEL', int))
             if after.premium_since and not before.premium_since:
                 await after.send(embed=self.thank_boost)
                 await self.boost_log.send(f'{before.mention} started boosting.')
@@ -67,8 +58,8 @@ class Boosters(commands.Cog):
         help='Platinum and booster users can select their own colour role with *colour [colour]. The colours available can be seen with *colour, or you can clear your colour with *colour clear.',
     )
     async def colour(self, ctx: commands.Context, message: str = None):
-        boost_role = get(ctx.guild.roles, id=905864474538438788)
-        plat = get(ctx.guild.roles, id=904116235237752832)
+        boost_role = get(ctx.guild.roles, id=get_from_environment('BOOST_ROLE', int))
+        plat = get(ctx.guild.roles, id=get_list('LEVEL_ROLES')[-1])
         if boost_role in ctx.author.roles or plat in ctx.author.roles:
             if message:
                 if message == 'clear':

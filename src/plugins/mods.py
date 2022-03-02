@@ -9,6 +9,7 @@ from discord import ButtonStyle, ChannelType, InteractionType
 from discord.ext import commands
 from discord.ui import Button, View
 
+from .. import get_from_environment
 
 if TYPE_CHECKING:
     from .. import AstroBot
@@ -47,14 +48,14 @@ class Mods(commands.Cog):
         if args is None:
             await ctx.send('Please include the game name.')
         else:
-            admin = self.bot.get_channel(876496435493888100)
+            admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
             await admin.send(content=args, view=self.view_vote)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
         if interaction.type == InteractionType.component:
             if interaction.data['custom_id'] == 'yes':
-                trending = self.bot.get_channel(876496435493888100)
+                trending = self.bot.get_channel(get_from_environment('TRENDING_CHANNEL', int))
                 await trending.create_thread(
                     name=interaction.message.content,
                     type=ChannelType.public_thread,

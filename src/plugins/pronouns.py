@@ -8,7 +8,7 @@ from discord import InteractionType
 from discord.ext import commands
 from discord.utils import get
 
-from .. import Embed
+from .. import Embed, get_from_environment
 
 
 if TYPE_CHECKING:
@@ -23,11 +23,11 @@ class Pronouns(commands.Cog):
         self.bot = bot
 
     roles = {
-        'She/Her': 927717427402379304,
-        'He/Him': 927717432691408977,
-        'They/Them': 927717436806021210,
-        'Ask for Pronoun': 927717447442771969,
-        'Any Pronoun': 927717450856943636,
+        'She/Her': get_from_environment('SHE_HER', int),
+        'He/Him': get_from_environment('HE_HIM', int),
+        'They/Them': get_from_environment('THEM_THEM', int),
+        'Ask for Pronoun': get_from_environment('ASK', int),
+        'Any Pronoun': get_from_environment('ANY', int),
     }
 
     @commands.Cog.listener()

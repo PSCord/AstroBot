@@ -28,7 +28,6 @@ services:
       - TRENDING_CHANNEL
       - LOG_CHANNEL
       - WELCOME_CHANNEL
-      - DEVELOPMENT
 
   db:
     image: postgres:13-alpine

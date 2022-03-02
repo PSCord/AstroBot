@@ -10,7 +10,7 @@ from discord import Role
 from discord.ext import commands, tasks
 from discord.utils import get
 
-from .. import Embed
+from .. import Embed, get_from_environment
 
 
 if TYPE_CHECKING:
@@ -53,7 +53,7 @@ class Events(commands.Cog):
     #        )
     #        self.event_role = [x['eventroleid'] for x in record][0]
 
-    main_server = 860585050838663188
+    main_server = get_from_environment('MAIN_GUILD', int)
     event_cooldown = {}
 
     def cooldown(self, id):
@@ -118,6 +118,8 @@ class Events(commands.Cog):
         if enabled:
             if self.event_mode:
                 await ctx.send('Event mode is already enabled.')
+            elif role == None:
+                await ctx.send('You need to give an event role ID.')
             else:
                 async with self.bot.db.acquire() as conn:
                     await conn.execute(

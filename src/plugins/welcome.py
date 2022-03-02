@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from discord.ext import commands
 
-from .. import Embed
+from .. import Embed, get_from_environment
 
 
 if TYPE_CHECKING:
@@ -24,8 +24,8 @@ class Welcome(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        if member.guild == 860585050838663188:
-            general = self.bot.get_channel(876496435493888100)
+        if member.guild == get_from_environment('MAIN_GUILD', int):
+            general = self.bot.get_channel(get_from_environment('WELCOME_CHANNEL', int))
             if (time.time() - self.cooldown) < 90:
                 return
             else:
