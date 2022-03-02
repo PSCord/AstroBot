@@ -480,6 +480,48 @@ This is the final level. Congratulations on completing our level road! We're wor
         )
         await ctx.send(embed=embed)
 
+    
+    @commands.command(brief='Check another\'s XP.')
+    @commands.has_permissions(ban_members=True)
+    async def peek(self, ctx: commands.Context, user: discord.Member = None):
+        if not user:
+            return await ctx.send('I need a person to peek.')
+        level = 0
+        async with self.bot.db.acquire() as conn:
+            xp = await self.get_xp(user.id)
+            if not xp: return await ctx.send('Bot\'s can\'t get XP, silly.')
+            record = await conn.fetch(
+                '''
+                SELECT id, ROW_NUMBER () OVER (ORDER BY xp DESC) FROM levels
+                ''',
+            )
+            for x in record:
+                if x['id'] == user.id:
+                    pos = x['row_number']
+        for x in self.thresholds:
+            if xp >= x:
+                level += 1
+        rank = self.names[level]
+        if level == 0:
+            percent = math.floor(xp*100/250)
+        elif level == 10:
+            percent = 100
+        else:
+            percent = math.floor(
+                ((xp - self.thresholds[level - 1]) / (self.thresholds[level] - self.thresholds[level - 1])) * 100
+            )
+        progressbar = f"{'<:p1:828359003712127068>' * math.floor(percent/10)}{'<:p2:828359003897593946>' * (10-math.floor(percent/10))}"
+        desc = f'''**{rank}** ({xp} <:p_:828359003775303702>)
+        {percent}% to next level
+        {progressbar}'''
+        if self.double:
+            desc = desc + '\n<a:astrodance3:790935872844857405> **Double XP activated!**'
+        embed = Embed(title=f'{user.name} (Rank #{pos})', description=desc).set_thumbnail(
+            url=str(user.avatar.url)
+        )
+        await ctx.send(embed=embed)
+
+
     @commands.command(brief='Enable or disable double xp.', help='*doublexp toggle')
     @commands.has_permissions(administrator=True)
     async def doublexp(self, ctx: commands.Context, truthy: bool = None):
