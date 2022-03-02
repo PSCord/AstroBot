@@ -50,6 +50,7 @@ class Mods(commands.Cog):
         else:
             admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
             await admin.send(content=args, view=self.view_vote)
+            await ctx.send('Sent to admins, awaiting approval.')
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
