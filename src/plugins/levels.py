@@ -41,7 +41,7 @@ class Levels(commands.Cog):
             Embed(
                 title='You leveled up to Bronze 1 in **PlayStation**!',
                 description='''You now have access to **talk in voice channels**, and **post links to any website**!
-You're currently at **250** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **250** <:point:756582101339471933>. Check your progress any time by using `*xp` in #bot-commands.
 
 Your next level is <:b2:763397325208551484> **Bronze 2** at **750** <:point:756582101339471933>.''',
                 colour=0xA26161,
@@ -70,7 +70,7 @@ Your next level is <:b2:763397325208551484> **Bronze 2** at **750** <:point:7565
             Embed(
                 title='You leveled up to Bronze 2 in **PlayStation**!',
                 description='''You now have access to **double XP events**, earn double the points during special events!
-You're currently at **750** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **750** <:point:756582101339471933>. Check your progress any time by using `*xp` in #bot-commands.
 
 Your next level is <:b2:763397329096278056> **Bronze 3** at **1,250** <:point:756582101339471933>.''',
                 colour=0xC78585,
@@ -99,7 +99,7 @@ Your next level is <:b2:763397329096278056> **Bronze 3** at **1,250** <:point:75
             Embed(
                 title='You leveled up to Bronze 3 in **PlayStation**!',
                 description='''You now have access to **stream in voice channels**!
-You're currently at **1,250** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **1,250** <:point:756582101339471933>. Check your progress any time by using `*xp` in #bot-commands.
 
 Your next level is <:b2:763397329079894016> **Silver 1** at **2,500** <:point:756582101339471933>.''',
                 colour=0xC29F8C,
@@ -128,7 +128,7 @@ Your next level is <:b2:763397329079894016> **Silver 1** at **2,500** <:point:75
             Embed(
                 title='You leveled up to Silver 1 in **PlayStation**!',
                 description='''You now have access to **attach files and embed links**! Finally, all the images and reaction gifs are yours.
-You're currently at **2,500** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **2,500** <:point:756582101339471933>. Check your progress any time by using `*xp` in #bot-commands.
 
 Your next level is <:b2:763397329499455508> **Silver 2** at **5,000** <:point:756582101339471933>.''',
                 colour=0x4C769A,
@@ -157,7 +157,7 @@ Your next level is <:b2:763397329499455508> **Silver 2** at **5,000** <:point:75
             Embed(
                 title='You leveled up to Silver 2 in **PlayStation**!',
                 description='''You now have access to **Jumbo command (!jumbo)**, post large versions of emoji like they're stickers!
-You're currently at **5,000** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **5,000** <:point:756582101339471933>. Check your progress any time by using `*xp` in #bot-commands.
 
 Your next level is <:b2:763397329541136397> **Silver 3** at **7,500** <:point:756582101339471933>.''',
                 colour=0x798DA8,
@@ -185,7 +185,7 @@ Your next level is <:b2:763397329541136397> **Silver 3** at **7,500** <:point:75
         (
             Embed(
                 title='You leveled up to Silver 3 in **PlayStation**!',
-                description='''You're currently at **7,500** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+                description='''You're currently at **7,500** <:point:756582101339471933>. Check your progress any time by using *xp in #bot-commands.
 
 Your next level is <:b2:763397329100734494> **Gold 1** at **10,000** <:point:756582101339471933>.''',
                 colour=0xB0B7CA,
@@ -214,7 +214,7 @@ Your next level is <:b2:763397329100734494> **Gold 1** at **10,000** <:point:756
             Embed(
                 title='You leveled up to Gold 1 in **PlayStation**!',
                 description='''You now have access to **#the-lounge**, a special chat channel!
-You're currently at **10,000** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **10,000** <:point:756582101339471933>. Check your progress any time by using *xp in #bot-commands.
 
 Your next level is <:g2:763397329067442256> **Gold 2** at **15,000**  <:point:756582101339471933>.''',
                 colour=0xB38F4F,
@@ -243,7 +243,7 @@ Your next level is <:g2:763397329067442256> **Gold 2** at **15,000**  <:point:75
             Embed(
                 title='You leveled up to Gold 2 in **PlayStation**!',
                 description='''You now have access to **double XP events**, earn double the points during special events!
-You're currently at **10,000** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **10,000** <:point:756582101339471933>. Check your progress any time by using *xp in #bot-commands.
 
 Your next level is <:b2:763397329130094652> **Gold 3** at **20,000** <:point:756582101339471933>.''',
                 colour=0xCFB046,
@@ -272,7 +272,7 @@ Your next level is <:b2:763397329130094652> **Gold 3** at **20,000** <:point:756
             Embed(
                 title='You leveled up to Gold 3 in **PlayStation**!',
                 description='''You now have access to **priority application for project teams**, be prioritized when applying for our special teams! Check <#719536356727980032> for more information, and message ModMail to apply.
-You're currently at **20,000** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **20,000** <:point:756582101339471933>. Check your progress any time by using *xp in #bot-commands.
 
 Your next level is <:b2:763397329788862524> **Platinum** at **30,000** <:point:756582101339471933>.''',
                 colour=0xF2E14B,
@@ -301,7 +301,7 @@ Your next level is <:b2:763397329788862524> **Platinum** at **30,000** <:point:7
             Embed(
                 title='You leveled up to Platinum in **PlayStation**!',
                 description='''You're now **hoisted (displayed on the member list sidebar)**, and have access to **custom colors (\*color command)**!
-You're currently at **30,000** <:point:756582101339471933>. Check your progress any time by using \`*xp\` in #bot-commands.
+You're currently at **30,000** <:point:756582101339471933>. Check your progress any time by using *xp in #bot-commands.
 
 This is the final level. Congratulations on completing our level road! We're working on more cool stuff for you, so stay tuned.''',
                 colour=0x73BFF3,
@@ -377,7 +377,6 @@ This is the final level. Congratulations on completing our level road! We're wor
         if message.guild.id != self.main_server:
             return
         else:
-            xp = await self.get_xp(message.author.id)
             if not self.cooldown(message.author.id) and not message.author.bot:
                 if self.double:
                     async with self.bot.db.acquire() as conn:
@@ -407,6 +406,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                             ''',
                             message.author.id,
                         )
+                xp = await self.get_xp(message.author.id)
                 self.xp_cooldown[message.author.id] = time.time()
                 if xp in self.thresholds:
                     index = self.thresholds.index(xp)
@@ -458,7 +458,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 if x['id'] == ctx.author.id:
                     pos = x['row_number']
         for x in self.thresholds:
-            if xp > x:
+            if xp >= x:
                 level += 1
         rank = self.names[level]
         if level == 0:
