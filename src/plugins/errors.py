@@ -27,11 +27,15 @@ class Errors(commands.Cog):
     def cog_unload(self):
         self.bot.on_error = commands.Bot.on_error  # type: ignore
 
-    async def on_error(self, event: str, *args, **kwargs):
+    async def on_error(self, event: str, *args, **kwargs) -> None:
         log.exception(f'Unhandled exception in {event} handler.')
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        if TYPE_CHECKING:
+            assert isinstance(ctx.me, discord.Member)
+            assert isinstance(ctx.channel, discord.TextChannel)
+
         embed = None
         can_send = ctx.channel.permissions_for(ctx.me).send_messages
 
@@ -54,7 +58,10 @@ class Errors(commands.Cog):
         elif isinstance(error, commands.BotMissingPermissions):
             embed = Embed(title='Permissions Configuration Error', description=str(error))
         elif isinstance(error, commands.CommandOnCooldown):
-            embed = Embed(title='Command on cooldown.', description=str(f'You are on cooldown. Try again in {int(error.retry_after)} seconds.'))
+            embed = Embed(
+                title='Command on cooldown.',
+                description=str(f'You are on cooldown. Try again in {int(error.retry_after)} seconds.'),
+            )
 
         if embed is not None and can_send:
             try:
@@ -63,5 +70,5 @@ class Errors(commands.Cog):
                 pass
 
 
-def setup(bot: AstroBot):
+def setup(bot: AstroBot) -> None:
     bot.add_cog(Errors(bot))

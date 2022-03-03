@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-
 from typing import TYPE_CHECKING
 
 from discord import ButtonStyle, ChannelType, InteractionType
@@ -9,6 +8,7 @@ from discord.ext import commands
 from discord.ui import Button, View
 
 from .. import get_from_environment
+
 
 if TYPE_CHECKING:
     from .. import AstroBot

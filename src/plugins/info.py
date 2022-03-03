@@ -60,9 +60,7 @@ class Info(commands.Cog):
         else:
             desc += f'\nCreated **{delta.years}** years and **{delta.months}** months ago.'
 
-        infoembed = Embed(title=f'{user.name} (Member {pos})', description=desc).set_thumbnail(
-            url=str(user.avatar.url)
-        )
+        infoembed = Embed(title=f'{user.name} (Member {pos})', description=desc).set_thumbnail(url=str(user.avatar.url))
         await ctx.send(embed=infoembed)
 
 

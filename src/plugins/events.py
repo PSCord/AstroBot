@@ -92,7 +92,8 @@ class Events(commands.Cog):
                             '''
                             INSERT INTO events VALUES ($1, $2, 1)
                             ''',
-                            message.author.id, self.event_role
+                            message.author.id,
+                            self.event_role,
                         )
                         xp = 1
                     else:
@@ -111,7 +112,7 @@ class Events(commands.Cog):
                             SET xp = xp + 1
                         WHERE id = $1
                         ''',
-                        message.author.id
+                        message.author.id,
                     )
                 self.event_cooldown[message.author.id] = time.time()
 
@@ -147,7 +148,7 @@ class Events(commands.Cog):
                         DELETE FROM events
                         WHERE eventroleid = $1
                         ''',
-                        self.event_role
+                        self.event_role,
                     )
                     await conn.execute(
                         '''

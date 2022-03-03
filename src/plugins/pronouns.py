@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
-from discord import InteractionType
+import discord
 from discord.ext import commands
-from discord.utils import get
 
 from .. import get_from_environment
 
@@ -14,36 +12,51 @@ if TYPE_CHECKING:
     from .. import AstroBot
 
 
-log = logging.getLogger(__name__)
+ROLES = {
+    'She/Her': get_from_environment('SHE_HER', int),
+    'He/Him': get_from_environment('HE_HIM', int),
+    'They/Them': get_from_environment('THEM_THEM', int),
+    'Ask for Pronoun': get_from_environment('ASK', int),
+    'Any Pronoun': get_from_environment('ANY', int),
+}
 
 
 class Pronouns(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
 
-    roles = {
-        'She/Her': get_from_environment('SHE_HER', int),
-        'He/Him': get_from_environment('HE_HIM', int),
-        'They/Them': get_from_environment('THEM_THEM', int),
-        'Ask for Pronoun': get_from_environment('ASK', int),
-        'Any Pronoun': get_from_environment('ANY', int),
-    }
-
     @commands.Cog.listener()
-    async def on_interaction(self, interaction):
-        if interaction.type == InteractionType.application_command and interaction.data['name'] == 'pronouns':
-            data = interaction.data['options'][0]
-            if data['name'] == 'add':
-                role = get(interaction.guild.roles, id=self.roles[data['options'][0]['value']])
-                await interaction.user.add_roles(role, reason='Request via slash command.')
-                content = f"You've been given the {data['options'][0]['value']} pronoun role."
-            elif data['name'] == 'remove':
-                role = get(interaction.guild.roles, id=self.roles[data['options'][0]['value']])
-                await interaction.user.remove_roles(role, reason='Request via slash command.')
-                content = f"Your {data['options'][0]['value']} pronoun role has been removed."
+    async def on_interaction(self, interaction: discord.Interaction) -> None:
+        if interaction.type is not discord.InteractionType.application_command:
+            return
 
-            content += "\nAs a reminder, please message Modmail should you experience or observe any harassment."
-            await interaction.response.send_message(content=content, ephemeral=True)
+        if interaction.data['name'] != 'pronouns':  # type: ignore - interaction.data typings are incorrect
+            return
+
+        guild = interaction.guild
+
+        if guild is None:
+            return
+        else:
+            assert isinstance(interaction.user, discord.Member)  # Pain
+
+        data = interaction.data['options'][0]  # type: ignore - interaction.data typings are incorrect
+        role = guild.get_role(ROLES[data['options'][0]['value']])  # type: ignore - interaction.data typings are incorrect
+
+        if role is None:
+            return
+
+        if data['name'] == 'add':
+            content = f'You\'ve been given the {role.name} pronoun role.'
+            await interaction.user.add_roles(role, reason='Request via slash command.')
+        elif data['name'] == 'remove':
+            content = f'Your {role.name} pronoun role has been removed.'
+            await interaction.user.remove_roles(role, reason='Request via slash command.')
+        else:
+            raise RuntimeError('Invalid pronoun slash command was used.')
+
+        content += '\nAs a reminder, please message Modmail should you experience or observe any harassment.'
+        await interaction.response.send_message(content, ephemeral=True)
 
 
 def setup(bot: AstroBot):

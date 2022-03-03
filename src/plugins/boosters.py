@@ -7,9 +7,8 @@ from typing import TYPE_CHECKING
 import feedparser
 from discord.ext import commands
 from discord.utils import get
-from .. import get_from_environment, get_list
 
-from .. import Embed
+from .. import Embed, get_array_from_environment, get_from_environment
 
 
 if TYPE_CHECKING:
@@ -24,7 +23,7 @@ class Boosters(commands.Cog):
         self.bot = bot
 
     colour_names = ['forest', 'porpule', 'purple', 'skyblue', 'blue', 'mint', 'black', 'pink', 'ghost']
-    colour_roles = get_list('COLOUR_ROLES')
+    colour_roles = get_array_from_environment('COLOUR_ROLES', int)
 
     thank_boost = (
         Embed(
@@ -59,7 +58,7 @@ class Boosters(commands.Cog):
     )
     async def colour(self, ctx: commands.Context, message: str = None):
         boost_role = get(ctx.guild.roles, id=get_from_environment('BOOST_ROLE', int))
-        plat = get(ctx.guild.roles, id=get_list('LEVEL_ROLES')[-1])
+        plat = get(ctx.guild.roles, id=get_array_from_environment('LEVEL_ROLES', int)[-1])
         if boost_role in ctx.author.roles or plat in ctx.author.roles:
             if message:
                 if message == 'clear':

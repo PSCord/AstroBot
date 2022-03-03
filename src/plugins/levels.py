@@ -11,7 +11,7 @@ import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 
-from .. import Embed, get_list, get_from_environment
+from .. import Embed, get_array_from_environment, get_from_environment
 
 
 if TYPE_CHECKING:
@@ -329,7 +329,7 @@ This is the final level. Congratulations on completing our level road! We're wor
     ]
 
     thresholds = [250, 750, 1250, 2500, 5000, 7500, 10000, 15000, 20000, 30000]
-    level_roles = get_list('LEVEL_ROLES')
+    level_roles = get_array_from_environment('LEVEL_ROLES', int)
     names = [
         'None',
         'Bronze 1',
@@ -462,7 +462,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 level += 1
         rank = self.names[level]
         if level == 0:
-            percent = math.floor(xp*100/250)
+            percent = math.floor(xp * 100 / 250)
         elif level == 10:
             percent = 100
         else:
@@ -480,7 +480,6 @@ This is the final level. Congratulations on completing our level road! We're wor
         )
         await ctx.send(embed=embed)
 
-    
     @commands.command(brief='Check another\'s XP.')
     @commands.has_permissions(ban_members=True)
     async def peek(self, ctx: commands.Context, user: discord.Member = None):
@@ -489,7 +488,8 @@ This is the final level. Congratulations on completing our level road! We're wor
         level = 0
         async with self.bot.db.acquire() as conn:
             xp = await self.get_xp(user.id)
-            if not xp: return await ctx.send('Bot\'s can\'t get XP, silly.')
+            if not xp:
+                return await ctx.send('Bot\'s can\'t get XP, silly.')
             record = await conn.fetch(
                 '''
                 SELECT id, ROW_NUMBER () OVER (ORDER BY xp DESC) FROM levels
@@ -503,7 +503,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 level += 1
         rank = self.names[level]
         if level == 0:
-            percent = math.floor(xp*100/250)
+            percent = math.floor(xp * 100 / 250)
         elif level == 10:
             percent = 100
         else:
@@ -516,11 +516,8 @@ This is the final level. Congratulations on completing our level road! We're wor
         {progressbar}'''
         if self.double:
             desc = desc + '\n<a:astrodance3:790935872844857405> **Double XP activated!**'
-        embed = Embed(title=f'{user.name} (Rank #{pos})', description=desc).set_thumbnail(
-            url=str(user.avatar.url)
-        )
+        embed = Embed(title=f'{user.name} (Rank #{pos})', description=desc).set_thumbnail(url=str(user.avatar.url))
         await ctx.send(embed=embed)
-
 
     @commands.command(brief='Enable or disable double xp.', help='*doublexp toggle')
     @commands.has_permissions(administrator=True)
@@ -567,7 +564,6 @@ This is the final level. Congratulations on completing our level road! We're wor
             await ctx.send(f'Set {user.mention}\'s XP to {xp}.')
         else:
             await ctx.send(f'Please give an ID and XP to set to.')
-
 
     @commands.command(
         brief='See the top users by XP.',

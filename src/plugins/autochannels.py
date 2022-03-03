@@ -4,11 +4,10 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
-from .. import get_from_environment
 import feedparser
 from discord.ext import commands, tasks
 
-from .. import Embed
+from .. import Embed, get_from_environment
 
 
 if TYPE_CHECKING:
@@ -48,7 +47,7 @@ class Autochannels(commands.Cog):
             inline=False,
         )
     )
-    
+
     game_reviews = get_from_environment('GAME_REVIEWS_CHANNEL', int)
     psn_friends = get_from_environment('PSN_FRIENDS_CHANNEL', int)
     psn_friends_cooldown = {}
