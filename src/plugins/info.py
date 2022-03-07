@@ -59,8 +59,11 @@ class Info(commands.Cog):
             desc += f'\nCreated **{delta.months}** months ago.'
         else:
             desc += f'\nCreated **{delta.years}** years and **{delta.months}** months ago.'
-
-        infoembed = Embed(title=f'{user.name} (Member {pos})', description=desc).set_thumbnail(url=str(user.avatar.url))
+        if user.avatar:
+            url = user.avatar.url
+        else:
+            url = user.default_avatar.url
+        infoembed = Embed(title=f'{user.name} (Member {pos})', description=desc).set_thumbnail(url=str(url))
         await ctx.send(embed=infoembed)
 
 
