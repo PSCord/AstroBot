@@ -523,7 +523,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         if user.avatar:
             url = user.avatar.url
         else:
-            url = url.default_avatar.url
+            url = user.default_avatar.url
         embed = Embed(title=f'{user.name} (Rank #{pos})', description=desc).set_thumbnail(url=str(url))
         await ctx.send(embed=embed)
 
