@@ -475,8 +475,12 @@ This is the final level. Congratulations on completing our level road! We're wor
         {progressbar}'''
         if self.double:
             desc = desc + '\n<a:astrodance3:790935872844857405> **Double XP activated!**'
+        if ctx.author.avatar:
+            url = ctx.author.avatar.url
+        else:
+            url = ctx.author.default_avatar.url
         embed = Embed(title=f'{ctx.author.name} (Rank #{pos})', description=desc).set_thumbnail(
-            url=str(ctx.author.avatar.url)
+            url=str(url)
         )
         await ctx.send(embed=embed)
 
@@ -516,7 +520,11 @@ This is the final level. Congratulations on completing our level road! We're wor
         {progressbar}'''
         if self.double:
             desc = desc + '\n<a:astrodance3:790935872844857405> **Double XP activated!**'
-        embed = Embed(title=f'{user.name} (Rank #{pos})', description=desc).set_thumbnail(url=str(user.avatar.url))
+        if user.avatar:
+            url = user.avatar.url
+        else:
+            url = url.default_avatar.url
+        embed = Embed(title=f'{user.name} (Rank #{pos})', description=desc).set_thumbnail(url=str(url))
         await ctx.send(embed=embed)
 
     @commands.command(brief='Enable or disable double xp.', help='*doublexp toggle')
