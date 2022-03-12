@@ -28,6 +28,7 @@ services:
       - TRENDING_CHANNEL
       - LOG_CHANNEL
       - WELCOME_CHANNEL
+      - ARTISIAN_ROLE
 
   db:
     image: postgres:13-alpine

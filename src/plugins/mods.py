@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from discord import ButtonStyle, ChannelType, InteractionType
 from discord.ext import commands
+from discord.member import Member
 from discord.ui import Button, View
 
 from .. import get_from_environment
@@ -69,6 +70,12 @@ class Mods(commands.Cog):
                     content=f'**Veto\'d** ~~{interaction.message.content}~~', view=self.view_done
                 )
 
+    @commands.command(brief="Assign the artisian role.")
+    @commands.has_permissions(manage_emojis=True)
+    async def artisian(self, ctx: commands.Context, member: Member):
+        role = ctx.guild.get_role(get_from_environment('ARTISIAN_ROLE', int))
+        await member.add_roles(role, reason=f"Granted artisian role as per {ctx.author.name}")
+        await ctx.send(f'Given {member.mention} artisian role.')
 
 def setup(bot: AstroBot):
     bot.add_cog(Mods(bot))
