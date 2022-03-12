@@ -70,12 +70,16 @@ class Mods(commands.Cog):
                     content=f'**Veto\'d** ~~{interaction.message.content}~~', view=self.view_done
                 )
 
-    @commands.command(brief="Assign the artisian role.")
+    @commands.command(brief="Assign the artisan role.")
     @commands.has_permissions(manage_emojis=True)
-    async def artisian(self, ctx: commands.Context, member: Member):
+    async def artisan(self, ctx: commands.Context, member: Member):
         role = ctx.guild.get_role(get_from_environment('ARTISIAN_ROLE', int))
-        await member.add_roles(role, reason=f"Granted artisian role as per {ctx.author.name}")
-        await ctx.send(f'Given {member.mention} artisian role.')
+        if role in member.roles:
+            await member.remove_roles(role, reason=f"Removed artisan role as per {ctx.author.name}")
+            await ctx.send(f'Removed artisan role from {member.mention}.')
+        else:
+            await member.add_roles(role, reason=f"Granted artisan role as per {ctx.author.name}")
+            await ctx.send(f'Given {member.mention} artisan role.')
 
 def setup(bot: AstroBot):
     bot.add_cog(Mods(bot))
