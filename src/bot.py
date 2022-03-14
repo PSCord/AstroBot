@@ -57,7 +57,7 @@ class AstroBot(commands.Bot):
         for attempt in range(5):
             try:
                 self.db = await asyncpg.create_pool(os.environ['PSQL_DSN'])
-            except ConnectionRefusedError as e:
+            except (ConnectionRefusedError, asyncpg.CannotConnectNowError) as e:
                 if attempt == 5:
                     raise e
 
