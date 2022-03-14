@@ -5,6 +5,6 @@ discord.py @ git+https://github.com/Rapptz/discord.py@3e70a4e7980bdb5d06c5cbf312
 isort==5.9.3
 jishaku @ git+https://github.com/Gorialis/jishaku@27284df50b19acdf729feac8162dd3cf104133b4
 psutil==5.8.0
-uvloop==0.15.3
+uvloop==0.16.0
 feedparser==6.0.8
 python-dateutil==2.8.2
