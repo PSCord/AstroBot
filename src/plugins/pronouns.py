@@ -59,5 +59,5 @@ class Pronouns(commands.Cog):
         await interaction.response.send_message(content, ephemeral=True)
 
 
-def setup(bot: AstroBot):
-    bot.add_cog(Pronouns(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Pronouns(bot))

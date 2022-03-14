@@ -37,6 +37,7 @@ class AstroBot(commands.Bot):
             members=True,
             guild_messages=True,
             bans=True,
+            message_content=True,
         )
 
         super().__init__(
@@ -49,10 +50,10 @@ class AstroBot(commands.Bot):
         self.db: Optional[asyncpg.Pool] = None
         self.session: Optional[aiohttp.ClientSession] = None
 
-    def run(self):
+    def run(self) -> None:
         super().run(os.environ['BOT_TOKEN'])
 
-    async def start(self, *args, **kwargs):
+    async def setup_hook(self) -> None:
         for attempt in range(5):
             try:
                 self.db = await asyncpg.create_pool(os.environ['PSQL_DSN'])
@@ -70,6 +71,4 @@ class AstroBot(commands.Bot):
         self.session = aiohttp.ClientSession(headers={'User-Agent': 'Astrobot/1.0 (+https://discord.gg/ps)'})
 
         for name in EXTENSIONS:
-            self.load_extension(name)
-
-        await super().start(*args, **kwargs)
+            await self.load_extension(name)

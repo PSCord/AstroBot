@@ -618,5 +618,5 @@ This is the final level. Congratulations on completing our level road! We're wor
         await ctx.send(embed=embed)
 
 
-def setup(bot: AstroBot):
-    bot.add_cog(Levels(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Levels(bot))

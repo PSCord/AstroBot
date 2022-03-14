@@ -139,5 +139,5 @@ class Phishing(commands.Cog):
         raise YachtError
 
 
-def setup(bot: AstroBot) -> None:
-    bot.add_cog(Phishing(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Phishing(bot))

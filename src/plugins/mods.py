@@ -81,5 +81,5 @@ class Mods(commands.Cog):
             await member.add_roles(role, reason=f"Granted artisan role as per {ctx.author.name}")
             await ctx.send(f'Given {member.mention} artisan role.')
 
-def setup(bot: AstroBot):
-    bot.add_cog(Mods(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Mods(bot))

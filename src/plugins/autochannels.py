@@ -93,5 +93,5 @@ class Autochannels(commands.Cog):
         await self.bot.wait_until_ready()
 
 
-def setup(bot: AstroBot):
-    bot.add_cog(Autochannels(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Autochannels(bot))

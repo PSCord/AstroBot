@@ -45,5 +45,5 @@ class Welcome(commands.Cog):
             pass
 
 
-def setup(bot: AstroBot) -> None:
-    bot.add_cog(Welcome(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Welcome(bot))

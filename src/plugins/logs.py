@@ -41,5 +41,5 @@ class Logs(commands.Cog):
             )
 
 
-def setup(bot: AstroBot):
-    bot.add_cog(Logs(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Logs(bot))

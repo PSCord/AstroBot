@@ -83,5 +83,5 @@ class Boosters(commands.Cog):
             )
 
 
-def setup(bot: AstroBot):
-    bot.add_cog(Boosters(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Boosters(bot))

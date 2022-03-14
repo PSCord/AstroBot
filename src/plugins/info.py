@@ -67,5 +67,5 @@ class Info(commands.Cog):
         await ctx.send(embed=infoembed)
 
 
-def setup(bot: AstroBot):
-    bot.add_cog(Info(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Info(bot))

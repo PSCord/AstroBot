@@ -163,5 +163,5 @@ class Events(commands.Cog):
             await ctx.send('That\'s not one of the two options.')
 
 
-def setup(bot: AstroBot):
-    bot.add_cog(Events(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Events(bot))

@@ -70,5 +70,5 @@ class Errors(commands.Cog):
                 pass
 
 
-def setup(bot: AstroBot) -> None:
-    bot.add_cog(Errors(bot))
+async def setup(bot: AstroBot) -> None:
+    await bot.add_cog(Errors(bot))
