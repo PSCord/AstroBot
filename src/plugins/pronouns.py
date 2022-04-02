@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING, Literal
 
 import discord
@@ -31,7 +32,9 @@ class Pronouns(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
 
-    pronouns = discord.app_commands.Group(name='pronouns', description='Choose which pronoun roles you have in the server.')
+    pronouns = discord.app_commands.Group(
+        name='pronouns', description='Choose which pronoun roles you have in the server.'
+    )
 
     @pronouns.command()
     async def add(self, interaction: discord.Interaction, pronoun: PRONOUNS) -> None:
@@ -40,12 +43,16 @@ class Pronouns(commands.Cog):
         if TYPE_CHECKING:
             assert isinstance(interaction.user, discord.Member)
 
-        await interaction.response.defer(ephemeral=True)
-
         role_id: int = ROLES[pronoun]  # type: ignore
-        await interaction.user.add_roles(discord.Object(role_id), reason='Requested via /pronoun command')
 
-        await interaction.followup.send(f'You\'ve been given the {pronoun} pronoun role.\n{MODMAIL_REMINDER}', ephemeral=True)
+        await asyncio.gather(
+            interaction.response.defer(ephemeral=True),
+            interaction.user.add_roles(discord.Object(role_id), reason='Requested via /pronoun command'),
+        )
+
+        await interaction.followup.send(
+            f'You\'ve been given the {pronoun} pronoun role.\n{MODMAIL_REMINDER}', ephemeral=True
+        )
 
     @pronouns.command()
     async def remove(self, interaction: discord.Interaction, pronoun: PRONOUNS) -> None:
@@ -54,12 +61,16 @@ class Pronouns(commands.Cog):
         if TYPE_CHECKING:
             assert isinstance(interaction.user, discord.Member)
 
-        await interaction.response.defer(ephemeral=True)
-
         role_id: int = ROLES[pronoun]  # type: ignore
-        await interaction.user.remove_roles(discord.Object(role_id), reason='Requested via /pronoun command')
 
-        await interaction.followup.send(f'Your {pronoun} pronoun role has been removed.\n{MODMAIL_REMINDER}', ephemeral=True)
+        await asyncio.gather(
+            interaction.response.defer(ephemeral=True),
+            interaction.user.remove_roles(discord.Object(role_id), reason='Requested via /pronoun command'),
+        )
+
+        await interaction.followup.send(
+            f'Your {pronoun} pronoun role has been removed.\n{MODMAIL_REMINDER}', ephemeral=True
+        )
 
 
 async def setup(bot: AstroBot) -> None:
