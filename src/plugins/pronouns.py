@@ -28,15 +28,15 @@ PRONOUNS = Literal['She/Her', 'He/Him', 'They/Them', 'Ask for Pronouns', 'Any Pr
 MODMAIL_REMINDER = 'As a reminder, please message Modmail should you experience or observe any harassment.'
 
 
-class Pronouns(commands.Cog):
+class Pronouns(commands.Cog, discord.app_commands.Group):
+    """Choose which pronoun roles you have in the server."""
+
     def __init__(self, bot: AstroBot):
+        super().__init__()
+
         self.bot = bot
 
-    pronouns = discord.app_commands.Group(
-        name='pronouns', description='Choose which pronoun roles you have in the server.'
-    )
-
-    @pronouns.command()
+    @discord.app_commands.command()
     async def add(self, interaction: discord.Interaction, pronoun: PRONOUNS) -> None:
         """The pronoun role you want to add."""
 
@@ -54,7 +54,7 @@ class Pronouns(commands.Cog):
             f'You\'ve been given the {pronoun} pronoun role.\n{MODMAIL_REMINDER}', ephemeral=True
         )
 
-    @pronouns.command()
+    @discord.app_commands.command()
     async def remove(self, interaction: discord.Interaction, pronoun: PRONOUNS) -> None:
         """The pronoun role you want to remove."""
 
