@@ -410,13 +410,13 @@ This is the final level. Congratulations on completing our level road! We're wor
                 self.xp_cooldown[message.author.id] = time.time()
                 if xp in self.thresholds:
                     index = self.thresholds.index(xp)
-                    await message.author.send(embed=self.levelup[index])
                     role = get(message.guild.roles, id=self.level_roles[index - 1])
                     await message.author.remove_roles(role, reason='Leveled up.')
                     role = get(message.guild.roles, id=self.level_roles[index])
                     await message.author.add_roles(role, reason='Leveled up.')
                     logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
                     await logger.send(f'{message.author.mention} leveled up to {self.names[index+1]}')
+                    await message.author.send(embed=self.levelup[index])
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
