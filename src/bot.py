@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-from typing import Optional
 
 import aiohttp
 import asyncpg
@@ -47,8 +46,8 @@ class AstroBot(commands.Bot):
             intents=intents,
         )
 
-        self.db: Optional[asyncpg.Pool] = None
-        self.session: Optional[aiohttp.ClientSession] = None
+        self.db: asyncpg.Pool = discord.utils.MISSING
+        self.session: aiohttp.ClientSession = discord.utils.MISSING
 
     def run(self) -> None:
         super().run(os.environ['BOT_TOKEN'])
@@ -56,7 +55,7 @@ class AstroBot(commands.Bot):
     async def setup_hook(self) -> None:
         for attempt in range(5):
             try:
-                self.db = await asyncpg.create_pool(os.environ['PSQL_DSN'])
+                self.db = await asyncpg.create_pool(os.environ['PSQL_DSN'])  # type: ignore
             except (ConnectionRefusedError, asyncpg.CannotConnectNowError) as e:
                 if attempt == 5:
                     raise e
@@ -72,3 +71,10 @@ class AstroBot(commands.Bot):
 
         for name in EXTENSIONS:
             await self.load_extension(name)
+
+    async def close(self) -> None:
+        try:
+            await super().close()
+        finally:
+            await self.db.close()
+            await self.session.close()

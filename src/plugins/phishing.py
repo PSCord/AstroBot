@@ -101,13 +101,11 @@ class Phishing(commands.Cog):
                 pass
 
     async def _fetch_all_domains(self) -> Set[str]:
-        session: aiohttp.ClientSession = self.bot.session  # type: ignore
-
         headers = {
-            'X-Identity': session.headers['User-Agent'],
+            'X-Identity': self.bot.session.headers['User-Agent'],
         }
 
-        async with session.get('https://phish.sinking.yachts/v2/all', headers=headers) as resp:
+        async with self.bot.session.get('https://phish.sinking.yachts/v2/all', headers=headers) as resp:
             if not resp.ok:
                 raise YachtError
 
@@ -116,13 +114,11 @@ class Phishing(commands.Cog):
         return set(data)
 
     async def _listen_for_domains(self) -> AsyncGenerator[FeedResult, None]:
-        session: aiohttp.ClientSession = self.bot.session  # type: ignore
-
         headers = {
-            'X-Identity': session.headers['User-Agent'],
+            'X-Identity': self.bot.session.headers['User-Agent'],
         }
 
-        async with session.ws_connect('wss://phish.sinking.yachts/feed', headers=headers) as ws:
+        async with self.bot.session.ws_connect('wss://phish.sinking.yachts/feed', headers=headers) as ws:
             while not ws.closed:
                 message = await ws.receive()
                 log.debug(f'Received {message!r}.')
