@@ -47,7 +47,7 @@ class Boosters(commands.Cog):
                 await after.send(embed=self.thank_boost)
                 await self.boost_log.send(f'{before.mention} started boosting.')
             elif before.premium_since and not after.premium_since:
-                roles = tuple(get(before.guild.roles, id=x) for x in colour_roles)
+                roles = tuple(get(before.guild.roles, id=x) for x in self.colour_roles)
                 await before.remove_roles(*roles, reason='Stopped boosting.')
                 await self.boost_log.send(f'{before.mention} stopped boosting.')
 

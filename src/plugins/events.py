@@ -101,9 +101,9 @@ class Events(commands.Cog):
                 if xp == 14:
                     role = get(message.guild.roles, id=self.event_role)
                     await message.author.add_roles(role, reason='15 event messages.')
-                    await message.author.send(embed=self.event_embed)
                     logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
                     await logger.send(f'{message.author.mention} got the event role <@&{self.event_role}>')
+                    await message.author.send(embed=self.event_embed)
 
                 async with self.bot.db.acquire() as conn:
                     await conn.execute(
