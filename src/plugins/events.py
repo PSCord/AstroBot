@@ -98,13 +98,8 @@ class Events(commands.Cog):
                         xp = 1
                     else:
                         xp = [x['xp'] for x in record][0]
-                if xp == 14:
-                    role = get(message.guild.roles, id=self.event_role)
-                    await message.author.add_roles(role, reason='15 event messages.')
-                    logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
-                    await logger.send(f'{message.author.mention} got the event role <@&{self.event_role}>')
-                    await message.author.send(embed=self.event_embed)
-
+                
+                
                 async with self.bot.db.acquire() as conn:
                     await conn.execute(
                         '''
@@ -115,6 +110,14 @@ class Events(commands.Cog):
                         message.author.id,
                     )
                 self.event_cooldown[message.author.id] = time.time()
+
+                if xp == 14:
+                    role = get(message.guild.roles, id=self.event_role)
+                    await message.author.add_roles(role, reason='15 event messages.')
+                    logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
+                    await logger.send(f'{message.author.mention} got the event role <@&{self.event_role}>')
+                    await message.author.send(embed=self.event_embed)
+
 
     @commands.command(brief='Enable or conclude event mode.', help='Start an event with *eventmode enable roleid')
     @commands.has_permissions(administrator=True)
