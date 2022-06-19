@@ -45,11 +45,11 @@ class Boosters(commands.Cog):
             boost_log = self.bot.get_channel(get_from_environment('BOOST_CHANNEL', int))
             if after.premium_since and not before.premium_since:
                 await after.send(embed=self.thank_boost)
-                await self.boost_log.send(f'{before.mention} started boosting.')
+                await boost_log.send(f'{before.mention} started boosting.')
             elif before.premium_since and not after.premium_since:
                 roles = tuple(get(before.guild.roles, id=x) for x in self.colour_roles)
                 await before.remove_roles(*roles, reason='Stopped boosting.')
-                await self.boost_log.send(f'{before.mention} stopped boosting.')
+                await boost_log.send(f'{before.mention} stopped boosting.')
 
     @commands.command(
         aliases=['color'],
