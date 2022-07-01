@@ -1,6 +1,6 @@
 aiohttp==3.8.1
 asyncpg==0.25.0
-black==22.3.0
+black==22.6.0
 discord.py @ git+https://github.com/Rapptz/discord.py@d6004363784478538f8c2e3049ca59306f7da9a4
 isort==5.10.1
 jishaku==2.5.0
