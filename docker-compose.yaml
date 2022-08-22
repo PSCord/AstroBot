@@ -29,6 +29,7 @@ services:
       - LOG_CHANNEL
       - WELCOME_CHANNEL
       - ARTISIAN_ROLE
+      - EVENT_WINNER
 
   db:
     image: postgres:13-alpine
