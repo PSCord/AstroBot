@@ -81,5 +81,17 @@ class Mods(commands.Cog):
             await member.add_roles(role, reason=f"Granted artisan role as per {ctx.author.name}")
             await ctx.send(f'Given {member.mention} artisan role.')
 
+
+    @commands.command(brief="Assign the event winner role.")
+    @commands.has_role('1011206375369605190')
+    async def winner(self, ctx: commands.Context, member: Member):
+        role = ctx.guild.get_role(get_from_environment('EVENT_WINNER', int))
+        if role in member.roles:
+            await member.remove_roles(role, reason=f"Removed event winner role as per {ctx.author.name}")
+            await ctx.send(f'Removed event winner from {member.mention}.')
+        else:
+            await member.add_roles(role, reason=f"Granted event winner as per {ctx.author.name}")
+            await ctx.send(f'Given {member.mention} event winner.')
+
 async def setup(bot: AstroBot) -> None:
     await bot.add_cog(Mods(bot))
