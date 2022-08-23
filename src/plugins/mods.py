@@ -83,7 +83,7 @@ class Mods(commands.Cog):
 
 
     @commands.command(brief="Assign the event winner role.")
-    @commands.has_role('1011206375369605190')
+    @commands.has_role(1011206375369605190)
     async def winner(self, ctx: commands.Context, member: Member):
         role = ctx.guild.get_role(get_from_environment('EVENT_WINNER', int))
         if role in member.roles:
