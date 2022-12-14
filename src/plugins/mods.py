@@ -59,14 +59,16 @@ class Mods(commands.Cog):
                 trending = self.bot.get_channel(get_from_environment('TRENDING_CHANNEL', int))
                 await trending.create_thread(
                     name=interaction.message.content,
-                    type=ChannelType.public_thread,
+		    content=f'Welcome to the trending thread for {interaction.message.content}',
                     reason='Trending thread made at mod/admin discretion',
                 )
-                await interaction.edit_original_message(
+                await interaction.response.defer()
+                await interaction.message.edit(
                     content=f'**Created** ~~{interaction.message.content}~~', view=self.view_done
                 )
             elif interaction.data['custom_id'] == 'no':
-                await interaction.edit_original_message(
+                await interaction.response.defer()
+                await interaction.message.edit(
                     content=f'**Veto\'d** ~~{interaction.message.content}~~', view=self.view_done
                 )
 

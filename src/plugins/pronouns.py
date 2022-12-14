@@ -28,7 +28,7 @@ PRONOUNS = Literal['She/Her', 'He/Him', 'They/Them', 'Ask for Pronouns', 'Any Pr
 MODMAIL_REMINDER = 'As a reminder, please message Modmail should you experience or observe any harassment.'
 
 
-class Pronouns(commands.Cog, discord.app_commands.Group):
+class Pronouns(commands.GroupCog):
     """Choose which pronoun roles you have in the server."""
 
     def __init__(self, bot: AstroBot):
