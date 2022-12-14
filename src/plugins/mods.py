@@ -42,11 +42,12 @@ class Mods(commands.Cog):
     view_done.add_item(yes_disabled)
     view_done.add_item(no_disabled)
 
-    @commands.command(brief="Make a trending thread", help="Queue a thread to be made at admin discretion.")
+    @commands.command(brief="Make a trending thread.", help="Queue a thread to be made at admin discretion. *trending Game - Desc")
     @commands.has_permissions(ban_members=True)
     async def trending(self, ctx, *, args=None):
-        if args is None:
-            await ctx.send('Please include the game name.')
+        forum = args.split(' - ', 1)
+        if args is None or len(forum) != 2:
+            await ctx.send('Please include the game name, as well as a brief description in the format \'Game - Desc\'.')
         else:
             admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
             await admin.send(content=args, view=self.view_vote)
@@ -56,10 +57,11 @@ class Mods(commands.Cog):
     async def on_interaction(self, interaction):
         if interaction.type == InteractionType.component:
             if interaction.data['custom_id'] == 'yes':
+                forum = interaction.message.content.split(' - ', 1)
                 trending = self.bot.get_channel(get_from_environment('TRENDING_CHANNEL', int))
                 await trending.create_thread(
-                    name=interaction.message.content,
-		    content=f'Welcome to the trending thread for {interaction.message.content}',
+                    name=forum[0],
+		    content=f'__**{forum[0]}**__\n{forum[1]}',
                     reason='Trending thread made at mod/admin discretion',
                 )
                 await interaction.response.defer()
