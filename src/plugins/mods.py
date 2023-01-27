@@ -59,11 +59,13 @@ class Mods(commands.Cog):
             if interaction.data['custom_id'] == 'yes':
                 forum = interaction.message.content.split(' - ', 1)
                 trending = self.bot.get_channel(get_from_environment('TRENDING_CHANNEL', int))
-                await trending.create_thread(
+                game_thread = await trending.create_thread(
                     name=forum[0],
-		    content=f'__**{forum[0]}**__\n{forum[1]}',
+	    	        content=f'__**{forum[0]}**__\n{forum[1]}',
                     reason='Trending thread made at mod/admin discretion',
                 )
+                ping = await game_thread.thread.send(content=f'<@&683768439881334826>')
+                await ping.delete()
                 await interaction.response.defer()
                 await interaction.message.edit(
                     content=f'**Created** ~~{interaction.message.content}~~', view=self.view_done
