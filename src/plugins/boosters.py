@@ -36,7 +36,7 @@ class Boosters(commands.Cog):
 
     colour_embed = Embed(
         title='Colour Roles',
-        description='Enter the name of the color you\'d like to pick, e.g. `blue`, or `clear` to remove it.',
+        description='Enter the name of the color you\'d like to pick, e.g. `pink`, or `clear` to remove it.',
     ).set_image(url='https://cdn.discordapp.com/attachments/718973124078731354/1129749649419415622/colors.png')
 
     @commands.Cog.listener()
