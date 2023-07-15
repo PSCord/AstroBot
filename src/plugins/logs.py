@@ -28,14 +28,14 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        if message.guild.id == get_from_environment('MAIN_GUILD', int):
+        if message.guild.id == get_from_environment('MAIN_GUILD', int) and message.channel.id != (718973124078731354):
             await self.backup_log(
                 f"🗑 **{message.author}** ({message.author.id} / {message.author.mention}) deleted their message ({message.id}) at **[d]** in {message.channel.mention}> (**{message.channel.name}**, {message.channel.id}) ```{message.content}```"
             )
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
-        if after.guild.id == get_from_environment('MAIN_GUILD', int) and before.content != after.content:
+        if after.guild.id == get_from_environment('MAIN_GUILD', int) and before.content != after.content and after.channel.id != (718973124078731354):
             await self.backup_log(
                 f"✏ **{before.author}** ({before.author.id} / {before.author.mention}) edited their message ({before.id}) at **[d]** in {before.channel.mention} (**{before.channel.name}**, {before.channel.id}) ```{before.content}``` to ```{after.content}```"
             )
