@@ -22,7 +22,7 @@ class Boosters(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
 
-    colour_names = ['chocolate', 'greenish', 'leaf', 'aquamarine', 'not-fish', 'purple', 'violet', 'off-pink', 'pink']
+    colour_names = ['chocolate', 'greenish', 'leaf', 'not-fish', 'aquamarine', 'purple', 'violet', 'off-pink', 'pink']
     colour_roles = get_array_from_environment('COLOUR_ROLES', int)
 
     thank_boost = (
