@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from discord import ButtonStyle, ChannelType, InteractionType
 from discord.ext import commands
 from discord.member import Member
+from discord.threads import Thread
 from discord.ui import Button, View
 
 from .. import get_from_environment
@@ -52,6 +53,13 @@ class Mods(commands.Cog):
             admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
             await admin.send(content=args, view=self.view_vote)
             await ctx.send('Sent to admins, awaiting approval.')
+
+    @commands.command(brief="Edit a trending channel description.", help="Edit the first message in a trending channel. *tredit #thread desc")
+    async def tredit(self, ctx, trend: Thread, *, args=None):
+        if not args: return await ctx.send("Please give text...")
+        message = await trend.fetch_message(trend.id)
+        await message.edit(content=f"**__{trend.name}__**\n{args}")
+        await ctx.send("Done. Send Fish my regards.")
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
