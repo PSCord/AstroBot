@@ -30,6 +30,7 @@ services:
       - WELCOME_CHANNEL
       - ARTISIAN_ROLE
       - EVENT_WINNER
+      - TRENDING_ROLE
 
   db:
     image: postgres:13-alpine
