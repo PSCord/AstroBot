@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from discord import ButtonStyle, ChannelType, InteractionType
 from discord.ext import commands
 from discord.member import Member
+from discord.mentions import AllowedMentions
 from discord.threads import Thread
 from discord.ui import Button, View
 
@@ -22,6 +23,8 @@ log = logging.getLogger(__name__)
 class Mods(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
+        self.trending_role = get_from_environment("TRENDING_ROLE", int)
+
 
     yes = Button(
         style=ButtonStyle.primary, custom_id='yes', disabled=False, emoji='<:eggg:834519001140428860>', label='Yes'
@@ -54,30 +57,47 @@ class Mods(commands.Cog):
             await admin.send(content=args, view=self.view_vote)
             await ctx.send('Sent to admins, awaiting approval.')
 
-    @commands.command(brief="Edit a trending channel description.", help="Edit the first message in a trending channel. *tredit #thread desc")
-    async def tredit(self, ctx, trend: Thread, *, args=None):
+    @commands.command(brief="Edit a trending channel description.", help="Edit the first message in a trending channel. *tredit thread_id desc")
+    async def tredit(self, ctx, trend: int, *, args=None):
+        trendingChannel = await ctx.guild.fetch_channel(trend)
+        if not trendingChannel: return await ctx.send("Please give a valid thread ID.")
         if not args: return await ctx.send("Please give text...")
-        message = await trend.fetch_message(trend.id)
-        await message.edit(content=f"**__{trend.name}__**\n{args}")
-        await ctx.send("Done. Send Fish my regards.")
+        text = f'EDIT\n{trendingChannel.id}\n**__{trendingChannel.name}__**\n{args}'
+        admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
+        await admin.send(content=text, view=self.view_vote)
+        await ctx.send('Sent to admins, awaiting approval.')
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
         if interaction.type == InteractionType.component:
             if interaction.data['custom_id'] == 'yes':
-                forum = interaction.message.content.split(' - ', 1)
-                trending = self.bot.get_channel(get_from_environment('TRENDING_CHANNEL', int))
-                game_thread = await trending.create_thread(
-                    name=forum[0],
-	    	        content=f'__**{forum[0]}**__\n{forum[1]}',
-                    reason='Trending thread made at mod/admin discretion',
-                )
-                ping = await game_thread.thread.send(content=f'<@&683768439881334826>')
-                await ping.delete()
-                await interaction.response.defer()
-                await interaction.message.edit(
-                    content=f'**Created** ~~{interaction.message.content}~~', view=self.view_done
-                )
+                if interaction.message.content.split('\n')[0] == "EDIT":
+                    data = interaction.message.content.split('\n', 3)
+                    trendingChannel = await interaction.guild.fetch_channel(data[1])
+                    await trendingChannel.edit(archived=False)
+                    message = await trendingChannel.fetch_message(trendingChannel.id)
+                    await message.edit(content=f"**__{trendingChannel.name}__**\n{data[3]}")
+                    await trendingChannel.send(f"This trending channel has come back from the dead! <@{self.trending_role}>", allowed_mentions=AllowedMentions.all)
+                    await interaction.channel.send(f"<#{trendingChannel.id}> Done. Send Fish my regards.")
+                    await interaction.response.defer()
+                    await interaction.message.edit(
+                        content=f'**Edited** ~~{interaction.message.content}~~', view=self.view_done
+                    )
+
+                else:
+                    forum = interaction.message.content.split(' - ', 1)
+                    trending = self.bot.get_channel(get_from_environment('TRENDING_CHANNEL', int))
+                    game_thread = await trending.create_thread(
+                        name=forum[0],
+                        content=f'__**{forum[0]}**__\n{forum[1]}\n',
+                        reason='Trending thread made at mod/admin discretion',
+                    )
+                    ping = await game_thread.thread.send(content=f'<@&683768439881334826> <@{self.trending_role}>', allowed_mentions=AllowedMentions.all)
+                    await ping.delete()
+                    await interaction.response.defer()
+                    await interaction.message.edit(
+                        content=f'**Created** ~~{interaction.message.content}~~', view=self.view_done
+                    )
             elif interaction.data['custom_id'] == 'no':
                 await interaction.response.defer()
                 await interaction.message.edit(
