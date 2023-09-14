@@ -4,7 +4,7 @@ black==22.3.0
 #discord.py @ git+https://github.com/Rapptz/discord.py@d6004363784478538f8c2e3049ca59306f7da9a4
 discord.py==2.1.0
 isort==5.10.1
-jishaku==2.5.0
+jishaku==2.5.1
 psutil==5.9.0
 uvloop==0.16.0
 feedparser==6.0.8
