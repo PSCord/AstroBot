@@ -77,7 +77,7 @@ class Mods(commands.Cog):
                     await trendingChannel.edit(archived=False)
                     message = await trendingChannel.fetch_message(trendingChannel.id)
                     await message.edit(content=f"**__{trendingChannel.name}__**\n{data[3]}")
-                    await trendingChannel.send(f"This trending channel has come back from the dead! <@{self.trending_role}>", allowed_mentions=AllowedMentions.all)
+                    await trendingChannel.send(f"This trending channel has come back from the dead! <@{self.trending_role}>", allowed_mentions=AllowedMentions(roles=True))
                     await interaction.channel.send(f"<#{trendingChannel.id}> Done. Send Fish my regards.")
                     await interaction.response.defer()
                     await interaction.message.edit(
@@ -92,7 +92,7 @@ class Mods(commands.Cog):
                         content=f'__**{forum[0]}**__\n{forum[1]}\n',
                         reason='Trending thread made at mod/admin discretion',
                     )
-                    ping = await game_thread.thread.send(content=f'<@&683768439881334826> <@{self.trending_role}>', allowed_mentions=AllowedMentions.all)
+                    ping = await game_thread.thread.send(content=f'<@&683768439881334826> <@{self.trending_role}>', allowed_mentions=AllowedMentions(roles=True))
                     await ping.delete()
                     await interaction.response.defer()
                     await interaction.message.edit(
