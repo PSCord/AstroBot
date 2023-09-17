@@ -18,13 +18,13 @@ ROLES = {
     'He/Him': get_from_environment('HE_HIM', int),
     'They/Them': get_from_environment('THEY_THEM', int),
     'Ask for Pronoun': get_from_environment('ASK', int),
-    'Any Pronouns': get_from_environment('ANY', int),
+    'Any Pronoun': get_from_environment('ANY', int),
 }
 
 MAIN_GUILD = get_from_environment('MAIN_GUILD', int)
 
 
-PRONOUNS = Literal['She/Her', 'He/Him', 'They/Them', 'Ask for Pronouns', 'Any Pronouns']
+PRONOUNS = Literal['She/Her', 'He/Him', 'They/Them', 'Ask for Pronouns', 'Any Pronoun']
 MODMAIL_REMINDER = 'As a reminder, please message Modmail should you experience or observe any harassment.'
 
 
