@@ -58,6 +58,7 @@ class Mods(commands.Cog):
             await ctx.send('Sent to admins, awaiting approval.')
 
     @commands.command(brief="Edit a trending channel description.", help="Edit the first message in a trending channel. *tredit thread_id desc")
+    @commands.has_permissions(ban_members=True)
     async def tredit(self, ctx, trend: int, *, args=None):
         trendingChannel = await ctx.guild.fetch_channel(trend)
         if not trendingChannel: return await ctx.send("Please give a valid thread ID.")
