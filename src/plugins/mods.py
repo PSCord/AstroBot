@@ -94,13 +94,14 @@ class Mods(commands.Cog):
     async def on_interaction(self, interaction):
         if interaction.type == InteractionType.component:
             if interaction.data['custom_id'] == 'yes':
+                trending_announcement = self.bot.get_channel(get_from_environment('TRENDING_ANNOUNCEMENT_CHANNEL', int))
                 if interaction.message.content.split('\n')[0] == "EDIT":
                     data = interaction.message.content.split('\n', 3)
                     trendingChannel = await interaction.guild.fetch_channel(data[1])
                     await trendingChannel.edit(archived=False)
                     message = await trendingChannel.fetch_message(trendingChannel.id)
                     await message.edit(content=f"**__{trendingChannel.name}__**\n{data[3]}")
-                    await trendingChannel.send(f"This trending channel has come back from the dead! <@{self.trending_role}>", allowed_mentions=AllowedMentions(roles=True))
+                    await trending_announcement.send(f"<#{trendingChannel.id}> has come back from the dead! <@&{self.trending_role}>", allowed_mentions=AllowedMentions(roles=True))
                     await interaction.channel.send(f"<#{trendingChannel.id}> Done. Send Fish my regards.")
                     await interaction.response.defer()
                     await interaction.message.edit(
@@ -115,8 +116,7 @@ class Mods(commands.Cog):
                         content=f'__**{forum[0]}**__\n{forum[1]}\n',
                         reason='Trending thread made at mod/admin discretion',
                     )
-                    ping = await game_thread.thread.send(content=f'<@&683768439881334826> <@{self.trending_role}>', allowed_mentions=AllowedMentions(roles=True))
-                    await ping.delete()
+                    await trending_announcement.send(content=f'We have a new trending channel <@&{self.trending_role}>! <#{game_thread.thread.id}>', allowed_mentions=AllowedMentions(roles=True))
                     await interaction.response.defer()
                     await interaction.message.edit(
                         content=f'**Created** ~~{interaction.message.content}~~', view=self.view_done
