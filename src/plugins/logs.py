@@ -29,9 +29,15 @@ class Logs(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         if message.guild.id == get_from_environment('MAIN_GUILD', int) and message.channel.id != (718973124078731354):
-            await self.backup_log(
-                f"🗑 **{message.author}** ({message.author.id} / {message.author.mention}) deleted their message ({message.id}) at **[d]** in {message.channel.mention}> (**{message.channel.name}**, {message.channel.id}) ```{message.content}```"
-            )
+            if self.bot.pollLog != "": 
+                await self.backup_log(
+                    f"🗑 **{message.author}** ({message.author.id} / {message.author.mention}) deleted their message ({message.id}) at **[d]** in {message.channel.mention}> (**{message.channel.name}**, {message.channel.id})\n{self.bot.pollLog}"
+                )
+                self.bot.pollLog = ""
+            else:
+                await self.backup_log(
+                    f"🗑 **{message.author}** ({message.author.id} / {message.author.mention}) deleted their message ({message.id}) at **[d]** in {message.channel.mention}> (**{message.channel.name}**, {message.channel.id}) ```{message.content}```"
+                )
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):

@@ -37,6 +37,7 @@ class AstroBot(commands.Bot):
             guild_messages=True,
             bans=True,
             message_content=True,
+            guild_reactions=True
         )
 
         super().__init__(
@@ -44,10 +45,13 @@ class AstroBot(commands.Bot):
             case_insensitive=True,
             command_prefix='*',
             intents=intents,
+            enable_debug_events=True,
         )
 
         self.db: asyncpg.Pool = discord.utils.MISSING
         self.session: aiohttp.ClientSession = discord.utils.MISSING
+        
+        self.pollLog = ""
 
     def run(self) -> None:
         super().run(os.environ['BOT_TOKEN'])

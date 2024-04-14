@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import json
 from typing import TYPE_CHECKING
 
 from discord import ButtonStyle, ChannelType, InteractionType
@@ -67,6 +68,27 @@ class Mods(commands.Cog):
         admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
         await admin.send(content=text, view=self.view_vote)
         await ctx.send('Sent to admins, awaiting approval.')
+
+    @commands.Cog.listener()
+    async def on_socket_raw_receive(self, msg):
+        try:
+            packet = json.loads(msg.replace("'", '"').replace("null", '"null"'))
+            packet_data = packet['d']
+            if ('poll' not in packet_data.keys()): return
+        except:
+            return
+
+        channel = await self.bot.fetch_channel(packet_data['channel_id'])
+        message = await channel.fetch_message(packet_data['id'])
+        author = await channel.guild.fetch_member(packet_data['author']['id'])
+        if not author.guild_permissions.ban_members: 
+            log_message = "__**The deleted message was a poll, with the following properties:**__"
+            log_message += f"\n**Question**: {packet_data['poll']['question']['text']}"
+            for answer in packet_data['poll']['answers']:
+                log_message += f'\n**Answer {answer["answer_id"]}** (emoji: {answer["poll_media"]["emoji"]["name"] if "emoji" in answer["poll_media"].keys() else "none"}): {answer["poll_media"]["text"] if "text" in answer["poll_media"].keys() else "none"}'
+            self.bot.pollLog = log_message
+            await message.delete()
+
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
