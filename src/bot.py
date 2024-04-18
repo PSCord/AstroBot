@@ -50,8 +50,6 @@ class AstroBot(commands.Bot):
 
         self.db: asyncpg.Pool = discord.utils.MISSING
         self.session: aiohttp.ClientSession = discord.utils.MISSING
-        
-        self.pollLog = ""
 
     def run(self) -> None:
         super().run(os.environ['BOT_TOKEN'])
