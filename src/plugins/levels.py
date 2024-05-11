@@ -560,6 +560,11 @@ This is the final level. Congratulations on completing our level road! We're wor
     async def setxp(self, ctx: commands.Context, user: discord.User = None, xp: int = None):
         if user and xp:
             async with self.bot.db.acquire() as conn:
+                res = await conn.fetch('SELECT xp FROM levels WHERE id = $1', user.id)
+                if len(res) != 1: 
+                    await ctx.send("This user is either not in the server, or something really broke.")
+                    return
+                currXp = res[0][0]
                 await conn.execute(
                     '''
                     UPDATE levels
@@ -571,7 +576,7 @@ This is the final level. Congratulations on completing our level road! We're wor
                 )
             await ctx.send(f'Set {user.mention}\'s XP to {xp}.')
             logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
-            await logger.send(f'Set {user.mention}\'s XP to {xp} as per {ctx.author.mention}.')
+            await logger.send(f'Set {user.mention}\'s XP to {xp} (prev: {currXp}) as per {ctx.author.mention}.')
         else:
             await ctx.send(f'Please give an ID and XP to set to.')
 
