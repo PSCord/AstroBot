@@ -570,6 +570,8 @@ This is the final level. Congratulations on completing our level road! We're wor
                     user.id,
                 )
             await ctx.send(f'Set {user.mention}\'s XP to {xp}.')
+            logger = self.bot.get_channel(get_from_environment('LEVELS_CHANNEL', int))
+            await logger.send(f'Set {user.mention}\'s XP to {xp} as per {ctx.author.mention}.')
         else:
             await ctx.send(f'Please give an ID and XP to set to.')
 
