@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from discord import ButtonStyle, ChannelType, InteractionType
+from discord import ButtonStyle, ChannelType, InteractionType, Message
 from discord.ext import commands
 from discord.member import Member
 from discord.mentions import AllowedMentions
@@ -127,6 +127,17 @@ class Mods(commands.Cog):
         else:
             await member.add_roles(role, reason=f"Granted event winner as per {ctx.author.name}")
             await ctx.send(f'Given {member.mention} event winner.')
+
+
+    @commands.Cog.listener()
+    async def on_message(self, msg: Message):
+        if any(word in msg.content for word in ["nude", "leak", "onlyfan", "teen", "porn", "nsfw"]) and ("@everyone" in msg.content or "discord.gg" in msg.content):
+            try:
+                await msg.author.send("**You have been banned from the PlayStation Discord for sending NSFW server invites.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know.")
+                informed = "User was informed via DM."
+            except:
+                informed = "User has DM's closed, and was not informed."
+            await msg.guild.ban(msg.author, reason=f'Sending an NSFW invite. {informed}')
 
 async def setup(bot: AstroBot) -> None:
     await bot.add_cog(Mods(bot))
