@@ -131,7 +131,8 @@ class Mods(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg: Message):
-        if any(word in msg.content for word in ["nude", "leak", "onlyfan", "teen", "porn", "nsfw"]) and ("@everyone" in msg.content or "discord.gg" in msg.content):
+        msg_lower = msg.content.lower()
+        if any(word in msg_lower for word in ["nude", "leak", "onlyfan", "teen", "porn", "nsfw"]) and ("@everyone" in msg_lower or "discord.gg" in msg_lower):
             try:
                 await msg.author.send("**You have been banned from the PlayStation Discord for sending NSFW server invites.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know.")
                 informed = "User was informed via DM."
