@@ -379,17 +379,7 @@ This is the final level. Congratulations on completing our level road! We're wor
         else:
             if not self.cooldown(message.author.id) and not message.author.bot:
                 xp = await self.get_xp(message.author.id)
-                if self.double:
-                    async with self.bot.db.acquire() as conn:
-                        await conn.execute(
-                            '''
-                            UPDATE levels
-                                SET xp = xp + 2
-                            WHERE id = $1
-                            ''',
-                            message.author.id,
-                        )
-                elif xp == None:
+                if xp == None:
                     async with self.bot.db.acquire() as conn:
                         await conn.execute(
                             '''
@@ -402,10 +392,11 @@ This is the final level. Congratulations on completing our level road! We're wor
                         await conn.execute(
                             '''
                             UPDATE levels
-                                SET xp = xp + 1
+                                SET xp = xp + $2
                             WHERE id = $1
                             ''',
                             message.author.id,
+                            2 if self.double else 1,
                         )
                 self.xp_cooldown[message.author.id] = time.time()
                 if xp in self.thresholds:
