@@ -604,11 +604,13 @@ This is the final level. Congratulations on completing our level road! We're wor
                 num = num + (int(args) - 1) * 10
         else:
             return await ctx.send(content='Only pages 1-10 of the leaderboard are available.')
+
+        guild = self.bot.get_guild(self.main_server) 
         for x in record:
             try:
-                user = self.bot.get_guild(self.main_server).get_member(x['id'])
-                user = user.name
-            except (discord.errors.NotFound, AttributeError) as e:
+                u = guild.get_member(x['id']) or await guild.fetch_member(x['id'])
+                user = u.name
+            except:
                 user = "User left."
             string += f"{num}. {user} - **{x['xp']}** <:p_:828359003775303702>\n"
             num += 1
