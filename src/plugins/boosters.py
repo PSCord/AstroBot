@@ -22,7 +22,7 @@ class Boosters(commands.Cog):
     def __init__(self, bot: AstroBot):
         self.bot = bot
 
-    colour_names = ['chocolate', 'greenish', 'leaf', 'not-fish', 'aquamarine', 'purple', 'violet', 'off-pink', 'pink']
+    colour_names = ['rust', 'ecru', 'moss', 'still-not-fish', 'tealquoise', 'porpule', 'plat-two', 'off-pink', 'uwu']
     colour_roles = get_array_from_environment('COLOUR_ROLES', int)
 
     thank_boost = (
@@ -37,7 +37,7 @@ class Boosters(commands.Cog):
     colour_embed = Embed(
         title='Colour Roles',
         description='Enter the name of the color you\'d like to pick, e.g. `pink`, or `clear` to remove it.',
-    ).set_image(url='https://cdn.discordapp.com/attachments/718973124078731354/1129749649419415622/colors.png')
+    ).set_image(url='https://cdn.discordapp.com/attachments/718973124078731354/1531542305171963976/clors.png')
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
