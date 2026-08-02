@@ -7,5 +7,5 @@ isort==5.10.1
 jishaku==2.5.0
 psutil==5.9.0
 uvloop==0.16.0
-feedparser==6.0.8
+feedparser==6.0.10
 python-dateutil==2.8.2
