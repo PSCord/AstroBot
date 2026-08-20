@@ -169,12 +169,12 @@ class Mods(commands.Cog):
         ):
             try:
                 await msg.author.send(
-                    "**You have been banned from the PlayStation Discord for sending NSFW server invites or crypto spam.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know."
+                    "**You have been banned from the PlayStation Discord for sending NSFW server invites.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know."
                 )
                 informed = "User was informed via DM."
             except:
                 informed = "User has DM's closed, and was not informed."
-            await msg.guild.ban(msg.author, reason=f'OCR detected NSFW invite/crypto spam. {informed}')
+            await msg.guild.ban(msg.author, reason=f'Autoban for NSFW server invites. {informed}')
             return True
 
         return False
