@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from discord import ButtonStyle, ChannelType, InteractionType, Message
 from discord.ext import commands
@@ -10,8 +10,9 @@ from discord.mentions import AllowedMentions
 from discord.threads import Thread
 from discord.ui import Button, View
 
-from .. import get_from_environment
+from rapidocr.utils.output import RapidOCROutput
 
+from .. import get_from_environment
 
 if TYPE_CHECKING:
     from .. import AstroBot
@@ -25,6 +26,8 @@ class Mods(commands.Cog):
         self.bot = bot
         self.trending_role = get_from_environment("TRENDING_ROLE", int)
 
+    def has_any(self, s: str, words: List[str]):
+        return any(word in s.lower() for word in words)
 
     yes = Button(
         style=ButtonStyle.primary, custom_id='yes', disabled=False, emoji='<:eggg:834519001140428860>', label='Yes'
@@ -46,23 +49,32 @@ class Mods(commands.Cog):
     view_done.add_item(yes_disabled)
     view_done.add_item(no_disabled)
 
-    @commands.command(brief="Make a trending thread.", help="Queue a thread to be made at admin discretion. *trending Game - Desc")
+    @commands.command(
+        brief="Make a trending thread.", help="Queue a thread to be made at admin discretion. *trending Game - Desc"
+    )
     @commands.has_permissions(ban_members=True)
     async def trending(self, ctx, *, args=None):
         forum = args.split(' - ', 1)
         if args is None or len(forum) != 2:
-            await ctx.send('Please include the game name, as well as a brief description in the format \'Game - Desc\'.')
+            await ctx.send(
+                'Please include the game name, as well as a brief description in the format \'Game - Desc\'.'
+            )
         else:
             admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
             await admin.send(content=args, view=self.view_vote)
             await ctx.send('Sent to admins, awaiting approval.')
 
-    @commands.command(brief="Edit a trending channel description.", help="Edit the first message in a trending channel. *tredit thread_id desc")
+    @commands.command(
+        brief="Edit a trending channel description.",
+        help="Edit the first message in a trending channel. *tredit thread_id desc",
+    )
     @commands.has_permissions(ban_members=True)
     async def tredit(self, ctx, trend: int, *, args=None):
         trendingChannel = await ctx.guild.fetch_channel(trend)
-        if not trendingChannel: return await ctx.send("Please give a valid thread ID.")
-        if not args: return await ctx.send("Please give text...")
+        if not trendingChannel:
+            return await ctx.send("Please give a valid thread ID.")
+        if not args:
+            return await ctx.send("Please give text...")
         text = f'EDIT\n{trendingChannel.id}\n**__{trendingChannel.name}__**\n{args}'
         admin = self.bot.get_channel(get_from_environment('ADMIN_CHANNEL', int))
         await admin.send(content=text, view=self.view_vote)
@@ -79,7 +91,10 @@ class Mods(commands.Cog):
                     await trendingChannel.edit(archived=False)
                     message = await trendingChannel.fetch_message(trendingChannel.id)
                     await message.edit(content=f"**__{trendingChannel.name}__**\n{data[3]}")
-                    await trending_announcement.send(f"<#{trendingChannel.id}> has come back from the dead! <@&{self.trending_role}>", allowed_mentions=AllowedMentions(roles=True))
+                    await trending_announcement.send(
+                        f"<#{trendingChannel.id}> has come back from the dead! <@&{self.trending_role}>",
+                        allowed_mentions=AllowedMentions(roles=True),
+                    )
                     await interaction.channel.send(f"<#{trendingChannel.id}> Done. Send Fish my regards.")
                     await interaction.response.defer()
                     await interaction.message.edit(
@@ -94,7 +109,10 @@ class Mods(commands.Cog):
                         content=f'__**{forum[0]}**__\n{forum[1]}\n',
                         reason='Trending thread made at mod/admin discretion',
                     )
-                    await trending_announcement.send(content=f'We have a new trending channel <@&{self.trending_role}>! <#{game_thread.thread.id}>', allowed_mentions=AllowedMentions(roles=True))
+                    await trending_announcement.send(
+                        content=f'We have a new trending channel <@&{self.trending_role}>! <#{game_thread.thread.id}>',
+                        allowed_mentions=AllowedMentions(roles=True),
+                    )
                     await interaction.response.defer()
                     await interaction.message.edit(
                         content=f'**Created** ~~{interaction.message.content}~~', view=self.view_done
@@ -116,7 +134,6 @@ class Mods(commands.Cog):
             await member.add_roles(role, reason=f"Granted artisan role as per {ctx.author.name}")
             await ctx.send(f'Given {member.mention} artisan role.')
 
-
     @commands.command(brief="Assign the event winner role.")
     @commands.has_role(1011206375369605190)
     async def winner(self, ctx: commands.Context, member: Member):
@@ -128,17 +145,71 @@ class Mods(commands.Cog):
             await member.add_roles(role, reason=f"Granted event winner as per {ctx.author.name}")
             await ctx.send(f'Given {member.mention} event winner.')
 
-
     @commands.Cog.listener()
     async def on_message(self, msg: Message):
+        banned_for_nsfw = await self.nsfw_invite_filter(msg)
+        if banned_for_nsfw:
+            return
+
+        author = msg.author
+        if not isinstance(author, Member):
+            return
+        if (
+            not (author.guild_permissions.attach_files or author.guild_permissions.embed_links)
+            and len(msg.attachments) != 0
+        ):
+            await self.ocr_filter(msg)
+
+    async def nsfw_invite_filter(self, msg: Message):
         msg_lower = msg.content.lower()
-        if any(word in msg_lower for word in ["nude", "leak", "onlyfan", "teen", "porn", "nsfw"]) and ("@everyone" in msg_lower or "discord.gg" in msg_lower):
+        if (
+            self.has_any(msg.content, ["nude", "leak", "onlyfan", "teen", "porn", "nsfw"])
+            and ("@everyone" in msg_lower or "discord.gg" in msg_lower)
+            and not msg.author.bot
+        ):
             try:
-                await msg.author.send("**You have been banned from the PlayStation Discord for sending NSFW server invites.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know.")
+                await msg.author.send(
+                    "**You have been banned from the PlayStation Discord for sending NSFW server invites or crypto spam.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know."
+                )
                 informed = "User was informed via DM."
             except:
                 informed = "User has DM's closed, and was not informed."
-            await msg.guild.ban(msg.author, reason=f'Sending an NSFW invite. {informed}')
+            await msg.guild.ban(msg.author, reason=f'OCR detected NSFW invite/crypto spam. {informed}')
+            return True
+
+        return False
+
+    async def ocr_filter(self, msg: Message):
+        bad_terms = (
+            ["nude", "leak", "onlyfan", "teen", "porn", "nsfw", "cam", "naked", "sex"]
+            + ["crypto", "bitcoin", "giveaway"]
+            + ["@everyone", "discord.gg"]
+        )
+        ocr = self.bot.engine
+
+        if len(msg.attachments) == 0:
+            return
+
+        det = []
+        for img in msg.attachments:
+            result = ocr(img.url)
+            assert isinstance(result, RapidOCROutput)
+            if result.txts is None or result.scores is None:
+                return
+
+            res = zip(result.txts, result.scores)
+            for r, conf in res:
+                if self.has_any(r, bad_terms) and conf > 0.9:
+                    det.append(r)
+
+        if len(det) > 0:
+            automod = self.bot.get_channel(get_from_environment('AUTOMOD_LOG_CHANNEL', int))
+            log = f"""**NSFW/Crypto/etc image detected**
+User: <@{msg.author.id}> ({msg.author.id})
+Detected terms: {det}
+[Message link]({msg.jump_url})"""
+            await automod.send(log)
+
 
 async def setup(bot: AstroBot) -> None:
     await bot.add_cog(Mods(bot))

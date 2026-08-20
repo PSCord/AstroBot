@@ -6,7 +6,7 @@ import aiohttp
 import asyncpg
 import discord
 from discord.ext import commands
-
+from rapidocr import RapidOCR, LangDet, EngineType, OCRVersion, ModelType, LangRec
 
 log = logging.getLogger(__name__)
 
@@ -32,12 +32,7 @@ class AstroBot(commands.Bot):
         allowed_mentions = discord.AllowedMentions.none()
 
         intents = discord.Intents(
-            guilds=True,
-            members=True,
-            guild_messages=True,
-            bans=True,
-            message_content=True,
-            guild_reactions=True
+            guilds=True, members=True, guild_messages=True, bans=True, message_content=True, guild_reactions=True
         )
 
         super().__init__(
@@ -69,6 +64,14 @@ class AstroBot(commands.Bot):
             else:
                 break
 
+        self.engine = RapidOCR(
+            params={
+                "Rec.engine_type": EngineType.ONNXRUNTIME,
+                "Rec.lang_type": LangRec.EN,
+                "Rec.model_type": ModelType.MOBILE,
+                "Rec.ocr_version": OCRVersion.PPOCRV5,
+            }
+        )
         self.session = aiohttp.ClientSession(headers={'User-Agent': 'Astrobot/1.0 (+https://discord.gg/ps)'})
 
         for name in EXTENSIONS:

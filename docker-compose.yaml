@@ -32,6 +32,7 @@ services:
       - ARTISIAN_ROLE
       - EVENT_WINNER
       - TRENDING_ROLE
+      - AUTOMOD_LOG_CHANNEL
 
   db:
     image: postgres:13-alpine
