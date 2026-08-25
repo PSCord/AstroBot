@@ -194,8 +194,9 @@ Reason: """
         except:
             informed = False
         await msg.guild.ban(
-            msg.author, reason=f'Autoban for NSFW server invites. Use was {"not" if not informed else ""} informed.'
+            msg.author, reason=f'Autoban for NSFW server invites. User was {"not" if not informed else ""} informed.'
         )
+        return informed
 
     def nsfw_invite_filter(self, msg: Message):
         msg_lower = msg.content.lower()
