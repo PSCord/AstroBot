@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING, List
+from io import BytesIO
 
-from discord import ButtonStyle, ChannelType, InteractionType, Message
+from discord import ButtonStyle, InteractionType, Message, File
 from discord.ext import commands
 from discord.member import Member
 from discord.mentions import AllowedMentions
@@ -147,9 +148,8 @@ class Mods(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg: Message):
-        banned_for_nsfw = await self.nsfw_invite_filter(msg)
-        if banned_for_nsfw:
-            return
+        nsfw_invites_sent = self.nsfw_invite_filter(msg)
+        ocr_detected = False
 
         author = msg.author
         if not isinstance(author, Member):
@@ -158,28 +158,54 @@ class Mods(commands.Cog):
             not (author.guild_permissions.attach_files or author.guild_permissions.embed_links)
             and len(msg.attachments) != 0
         ):
-            await self.ocr_filter(msg)
+            ocr_detected = self.ocr_filter(msg)
 
-    async def nsfw_invite_filter(self, msg: Message):
+        if not (ocr_detected or nsfw_invites_sent):
+            return
+
+        ban_reason = 'sending NSFW invites' if nsfw_invites_sent else 'sending images of NSFW content or cryptocurrency scams'
+        notified = await self.ban_author(msg, ban_reason)
+
+        log_msg = f"""**User autobanned by AstroBot**
+User: <@{msg.author.id}> ({msg.author.id})
+Notified by DM: {'Yes' if notified else 'No'}
+Reason: """
+
+        files: List[File] = []
+        if nsfw_invites_sent:
+            log_msg += "NSFW invites sent\n"
+            log_msg += f"Message content: `{msg.content}`"
+        elif ocr_detected:
+            log_msg += "OCR filter triggered with the following content"
+            for f in msg.attachments:
+                async with self.bot.session.get(f.url) as resp:
+                    file = File(BytesIO(await resp.read()), filename=f.filename)
+                    files.append(file)
+
+        automod = self.bot.get_channel(get_from_environment('AUTOMOD_LOG_CHANNEL', int))
+        await automod.send(log_msg, files=files)
+
+    async def ban_author(self, msg: Message, reason: str):
+        try:
+            await msg.author.send(
+                f"**You have been banned from the PlayStation Discord for {reason}.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know."
+            )
+            informed = True
+        except:
+            informed = False
+        await msg.guild.ban(
+            msg.author, reason=f'Autoban for NSFW server invites. Use was {"not" if not informed else ""} informed.'
+        )
+
+    def nsfw_invite_filter(self, msg: Message):
         msg_lower = msg.content.lower()
-        if (
+        return (
             self.has_any(msg.content, ["nude", "leak", "onlyfan", "teen", "porn", "nsfw"])
             and ("@everyone" in msg_lower or "discord.gg" in msg_lower)
             and not msg.author.bot
-        ):
-            try:
-                await msg.author.send(
-                    "**You have been banned from the PlayStation Discord for sending NSFW server invites.**\n* We are aware that your account was hacked.\n* Once you've recovered it and enabled 2 factor authentication, join our appeals server (https://discord.gg/CuG2mTQ) and appeal your ban.\n\nBelieve you've received this message in error? Join the ban appeals server and let us know."
-                )
-                informed = "User was informed via DM."
-            except:
-                informed = "User has DM's closed, and was not informed."
-            await msg.guild.ban(msg.author, reason=f'Autoban for NSFW server invites. {informed}')
-            return True
+        )
 
-        return False
-
-    async def ocr_filter(self, msg: Message):
+    def ocr_filter(self, msg: Message):
         bad_terms = (
             ["nude", "leak", "onlyfan", "teen", "porn", "nsfw", "cam", "naked", "sex"]
             + ["crypto", "bitcoin", "giveaway"]
@@ -188,28 +214,20 @@ class Mods(commands.Cog):
         ocr = self.bot.engine
 
         if len(msg.attachments) == 0:
-            return
+            return False
 
         det = []
         for img in msg.attachments:
             result = ocr(img.url)
             assert isinstance(result, RapidOCROutput)
             if result.txts is None or result.scores is None:
-                return
+                return False
 
             res = zip(result.txts, result.scores)
             for r, conf in res:
                 if self.has_any(r, bad_terms) and conf > 0.9:
-                    det.append(r)
-
-        if len(det) > 0:
-            automod = self.bot.get_channel(get_from_environment('AUTOMOD_LOG_CHANNEL', int))
-            log = f"""**NSFW/Crypto/etc image detected**
-User: <@{msg.author.id}> ({msg.author.id})
-Detected terms: {det}
-[Message link]({msg.jump_url})"""
-            await automod.send(log)
-
+                    return True
+        return False
 
 async def setup(bot: AstroBot) -> None:
     await bot.add_cog(Mods(bot))
