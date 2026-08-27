@@ -24,6 +24,7 @@ EXTENSIONS = {
     'src.plugins.phishing',
     'src.plugins.pronouns',
     'src.plugins.welcome',
+    'src.plugins.sticky'
 }
 
 
