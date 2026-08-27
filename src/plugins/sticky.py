@@ -273,7 +273,7 @@ class Sticky(commands.GroupCog, group_name='sticky'):
             ''',
                 channel.id if channel is not None else sticky.channel,
                 name or sticky.title,
-                message or sticky.msg,
+                message or sticky.msg.replace('\\n', '\n'),
                 trigger_msgs or sticky.trigger_msgs,
                 trigger_minutes or sticky.trigger_minutes,
                 id,
