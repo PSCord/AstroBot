@@ -306,6 +306,7 @@ class Sticky(commands.GroupCog, group_name='sticky'):
         message: str,
     ):
         await interaction.response.defer(ephemeral=False, thinking=True)
+        content = message.replace('\\n', '\n')
 
         sticky: StickyMessage
         async with self.bot.db.acquire() as conn:
@@ -319,7 +320,7 @@ class Sticky(commands.GroupCog, group_name='sticky'):
             ''',
                 channel.id,
                 name,
-                message.replace('\\n', '\n'),
+                content,
                 trigger_msgs,
                 trigger_minutes,
             )
@@ -328,7 +329,7 @@ class Sticky(commands.GroupCog, group_name='sticky'):
         self.stickies[sticky.id] = sticky
         await self.enable_sticky(sticky)
         await interaction.followup.send(
-            f'Created sticky message with ID #{sticky.id} for <#{sticky.channel}> with the following content:\n{message}'
+            f'Created sticky message with ID #{sticky.id} for <#{sticky.channel}> with the following content:\n{content}'
         )
 
 
