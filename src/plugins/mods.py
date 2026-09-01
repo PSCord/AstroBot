@@ -163,7 +163,9 @@ class Mods(commands.Cog):
         if not (ocr_detected or nsfw_invites_sent):
             return
 
-        ban_reason = 'sending NSFW invites' if nsfw_invites_sent else 'sending images of NSFW content or cryptocurrency scams'
+        ban_reason = (
+            'sending NSFW invites' if nsfw_invites_sent else 'sending images of NSFW content or cryptocurrency scams'
+        )
         notified = await self.ban_author(msg, ban_reason)
 
         log_msg = f"""**User autobanned by AstroBot**
@@ -208,7 +210,7 @@ Reason: """
 
     def ocr_filter(self, msg: Message):
         bad_terms = (
-            ["nude", "leak", "onlyfan", "teen", "porn", "nsfw", "cam", "naked", "sex"]
+            ["nude", "leak", "onlyfan", "teen", "porn", "nsfw", "naked", "sex", "on cam", "cam in"]
             + ["crypto", "bitcoin", "giveaway"]
             + ["@everyone", "discord.gg"]
         )
@@ -229,6 +231,7 @@ Reason: """
                 if self.has_any(r, bad_terms) and conf > 0.9:
                     return True
         return False
+
 
 async def setup(bot: AstroBot) -> None:
     await bot.add_cog(Mods(bot))
